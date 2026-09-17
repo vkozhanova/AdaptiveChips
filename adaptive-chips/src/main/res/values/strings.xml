@@ -1,0 +1,4 @@
+<resources>
+    <string name="adaptive_chips_expand">Expand</string>
+    <string name="adaptive_chips_collapse">Collapse</string>
+</resources>

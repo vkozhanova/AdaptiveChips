@@ -1,0 +1,4 @@
+<resources>
+    <string name="adaptive_chips_expand">Развернуть</string>
+    <string name="adaptive_chips_collapse">Свернуть</string>
+</resources>
