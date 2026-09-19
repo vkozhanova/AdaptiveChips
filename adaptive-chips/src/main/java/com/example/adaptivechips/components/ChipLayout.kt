@@ -1,4 +1,4 @@
-package com.example.adaptivechips
+package com.example.adaptivechips.components
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextMeasurer
