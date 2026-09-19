@@ -1,4 +1,4 @@
-package com.example.adaptivechips
+package com.example.adaptivechips.components
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -23,10 +23,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.adaptivechips.components.NoteItem
-import com.example.adaptivechips.components.NoteItemData
+import com.example.adaptivechips.R
 import com.example.adaptivechips.theme.AdaptiveChipsTheme
-import java.util.Collections.emptyList
 import kotlin.math.abs
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -71,7 +69,7 @@ fun SynchronizedChipScroller(
     val reachableTargets: List<Int> by remember {
         derivedStateOf {
             val max = scrollState.maxValue
-            if(max <= 0) return@derivedStateOf emptyList()
+            if (max <= 0) return@derivedStateOf emptyList()
             val reachable = layout.snapTargets.filter { it in 0..max }
             if (reachable.lastOrNull() != max) reachable + max else reachable
         }
@@ -82,23 +80,23 @@ fun SynchronizedChipScroller(
             .collect { isScrolling ->
                 if (isScrolling) return@collect
 
-                val  max = scrollState.maxValue
+                val max = scrollState.maxValue
                 val current = scrollState.value
 
-                if(current <= 2) return@collect
+                if (current <= 2) return@collect
                 if (current >= max - 2) {
-                if (abs(max - current) < 2) return@collect
-                scrollState.animateScrollTo(
-                    value = max,
-                    animationSpec = spring(
-                        stiffness = Spring.StiffnessLow,
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                    ),
-                )
+                    if (abs(max - current) < 2) return@collect
+                    scrollState.animateScrollTo(
+                        value = max,
+                        animationSpec = spring(
+                            stiffness = Spring.StiffnessLow,
+                            dampingRatio = Spring.DampingRatioNoBouncy,
+                        ),
+                    )
                     return@collect
-            }
+                }
                 val reachable = layout.snapTargets.filter { it <= max }
-                val  target = reachable.minByOrNull { abs(it - current)} ?: return@collect
+                val target = reachable.minByOrNull { abs(it - current) } ?: return@collect
                 if (abs(target - current) < 2) return@collect
                 scrollState.animateScrollTo(
                     value = target,
@@ -131,7 +129,10 @@ fun SynchronizedChipScroller(
             .fillMaxWidth()
             .horizontalScroll(scrollState),
     ) {
-        Column(verticalArrangement = Arrangement.spacedBy(dimens.rowSpacing)) {
+        Column(
+            modifier = Modifier.padding(horizontal = dimens.horizontalScreenPadding),
+            verticalArrangement = Arrangement.spacedBy(dimens.rowSpacing)
+        ) {
             layout.rows.forEach { row ->
                 Row(horizontalArrangement = Arrangement.spacedBy(dimens.itemSpacing)) {
                     row.forEach { laid ->
