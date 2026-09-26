@@ -4,8 +4,6 @@ coreKtx = "1.19.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
-kotlinxCollectionsImmutable = "0.5.2"
-kotlinxCollectionsImmutableVersion = "0.3.8"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
 kotlin = "2.4.20"
@@ -36,8 +34,6 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
-kotlinx-collections-immutable-v038 = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutableVersion" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
@@ -45,4 +41,3 @@ androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-

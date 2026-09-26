@@ -10,72 +10,83 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.adaptivechips.R
 import com.example.adaptivechips.theme.AdaptiveChipsTheme
+import kotlinx.coroutines.flow.distinctUntilChanged
+import java.util.Collections.emptyList
 import kotlin.math.abs
+import kotlin.math.roundToInt
 
+/**
+ * Синхронный скроллер чипов в несколько рядов.
+ *
+ * Не знает, как выглядит чип: рендер делегируется в [chip].
+ * Позиции для магнитного снапа берутся из реального layout верхнего ряда.
+ *
+ * @param items элементы
+ * @param state состояние выделения
+ * @param key стабильный ключ элемента (используется как id в state и как ключ кэша позиций)
+ * @param rowCount сколько рядов
+ * @param onScrollInfo публикует информацию о скролле — для индикатора
+ * @param chip слот: потребитель сам решает, как отрисовать чип
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun SynchronizedChipScroller(
-    items: List<NoteItemData>,
-    onItemSelectionChanged: (String, Boolean) -> Unit,
+internal fun <T> AdaptiveChipScroller(
+    items: List<T>,
+    state: AdaptiveChipState,
+    key: (T) -> String,
     modifier: Modifier = Modifier,
     rowCount: Int = 2,
     onScrollInfo: (ScrollInfo) -> Unit = {},
+    chip: @Composable (
+        item: T,
+        isSelected: Boolean,
+        onToggle: () -> Unit,
+    ) -> Unit,
 ) {
     val dimens = AdaptiveChipsTheme.dimens
-    val typography = AdaptiveChipsTheme.typography
-    val density = LocalDensity.current
-    val textMeasurer = rememberTextMeasurer()
     val scrollState = rememberScrollState()
 
-    val layout: ChipLayout<NoteItemData> = remember(items, rowCount, density, typography) {
-        val horizontalPaddingPx = with(density) { dimens.chipHorizontalPadding.roundToPx() }
-        val iconSizePx = with(density) { dimens.iconSize.roundToPx() }
-        val contentSpacingPx = with(density) { dimens.chipContentSpacing.roundToPx() }
-        val spacingPx = with(density) { dimens.itemSpacing.roundToPx() }
-        val checkOverhangPx = with(density) { 2.dp.roundToPx() }
+    val chipX = remember { mutableStateMapOf<String, Int>() }
 
-        layoutChips(
-            items = items,
-            rowCount = rowCount,
-            chipWidthPx = { item: NoteItemData ->
-                measureChipWidthPx(
-                    title = item.title,
-                    textMeasurer = textMeasurer,
-                    textStyle = typography.chipLabel,
-                    leadingIconSizePx = iconSizePx,
-                    horizontalPaddingPx = horizontalPaddingPx,
-                    contentSpacingPx = contentSpacingPx,
-                    checkOverhangPx = checkOverhangPx,
-                )
-            },
-            spacingPx = spacingPx,
-        )
+    val rows: List<List<T>> = remember(items, rowCount) {
+        List(rowCount) { r -> items.filterIndexed { i, _ -> i % rowCount == r } }
     }
+
+    val topRowKeys: List<String> = remember(rows, key) {
+        rows.firstOrNull()?.map(key).orEmpty()
+    }
+
+    val rawSnapTargets: List<Int> by remember {
+        derivedStateOf {
+            topRowKeys.mapNotNull { chipX[it] }.sorted()
+        }
+    }
+
     val reachableTargets: List<Int> by remember {
         derivedStateOf {
             val max = scrollState.maxValue
             if (max <= 0) return@derivedStateOf emptyList()
-            val reachable = layout.snapTargets.filter { it in 0..max }
+            val reachable = rawSnapTargets.filter { it in 0..max }
             if (reachable.lastOrNull() != max) reachable + max else reachable
         }
     }
-    // Магнитный снап: после остановки скролла подтягиваемся к ближайшей цели.
-    LaunchedEffect(scrollState, layout.snapTargets) {
+
+    LaunchedEffect(scrollState, rawSnapTargets) {
         snapshotFlow { scrollState.isScrollInProgress }
             .collect { isScrolling ->
                 if (isScrolling) return@collect
@@ -95,7 +106,7 @@ fun SynchronizedChipScroller(
                     )
                     return@collect
                 }
-                val reachable = layout.snapTargets.filter { it <= max }
+                val reachable = rawSnapTargets.filter { it <= max }
                 val target = reachable.minByOrNull { abs(it - current) } ?: return@collect
                 if (abs(target - current) < 2) return@collect
                 scrollState.animateScrollTo(
@@ -107,23 +118,26 @@ fun SynchronizedChipScroller(
                 )
             }
     }
-    // Публикуем ScrollInfo на основе reachableTargets.
+
     LaunchedEffect(scrollState, reachableTargets) {
-        snapshotFlow { scrollState.value }
-            .collect { value ->
-                val targets = reachableTargets
-                val pairCount = targets.size
-                val pair = if (targets.isEmpty()) 0
-                else targets.indexOfLast { it <= value }.coerceAtLeast(0)
-                onScrollInfo(
-                    ScrollInfo(
-                        currentPair = pair,
-                        pairCount = pairCount,
-                        maxScroll = scrollState.maxValue,
-                    ),
-                )
-            }
+        snapshotFlow {
+            val targets = reachableTargets
+            val value = scrollState.value
+            val max = scrollState.maxValue
+            val pairCount = targets.size
+            val pair = if (targets.isEmpty()) 0
+            else targets.indexOfLast { it <= value }.coerceAtLeast(0)
+            ScrollInfo(
+                currentPair = pair,
+                pairCount = pairCount,
+                maxScroll = max,
+            )
+        }
+            .distinctUntilChanged()
+            .collect { onScrollInfo(it) }
+
     }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -131,23 +145,24 @@ fun SynchronizedChipScroller(
     ) {
         Column(
             modifier = Modifier.padding(horizontal = dimens.horizontalScreenPadding),
-            verticalArrangement = Arrangement.spacedBy(dimens.rowSpacing)
+            verticalArrangement = Arrangement.spacedBy(dimens.rowSpacing),
         ) {
-            layout.rows.forEach { row ->
+            rows.forEachIndexed { rowIndex, rowItems ->
                 Row(horizontalArrangement = Arrangement.spacedBy(dimens.itemSpacing)) {
-                    row.forEach { laid ->
+                    rowItems.forEach { item ->
+                        val itemKey = key(item)
                         Box(
-                            modifier = Modifier.width(
-                                with(density) { laid.width.toDp() },
-                            ),
+                            modifier = Modifier.onGloballyPositioned { coords ->
+                                if (rowIndex == 0) {
+                                    val x = coords.positionInParent().x.roundToInt()
+                                    if (chipX[itemKey] != x) chipX[itemKey] = x
+                                }
+                            },
                         ) {
-                            NoteItem(
-                                title = laid.item.title,
-                                iconResId = laid.item.iconResId,
-                                isSelected = laid.item.isSelected,
-                                onSelectionChange = { isSelected ->
-                                    onItemSelectionChanged(laid.item.id, isSelected)
-                                },
+                            chip(
+                                item,
+                                state.isSelected(itemKey),
+                                { state.toggle(itemKey) },
                             )
                         }
                     }
@@ -157,7 +172,36 @@ fun SynchronizedChipScroller(
     }
 }
 
-data class ScrollInfo(
+/**
+ * Удобный overload для стандартного [AdaptiveChipItem]:
+ * использует [AdaptiveChip] как чип по умолчанию.
+ */
+
+@Composable
+internal fun AdaptiveChipScroller(
+    items: List<AdaptiveChipItem>,
+    state: AdaptiveChipState,
+    modifier: Modifier = Modifier,
+    rowCount: Int = 2,
+    onScrollInfo: (ScrollInfo) -> Unit = {},
+) = AdaptiveChipScroller(
+    items = items,
+    state = state,
+    key = { it.id },
+    modifier = modifier,
+    rowCount = rowCount,
+    onScrollInfo = onScrollInfo,
+    chip = { item, isSelected, onToggle ->
+        AdaptiveChip(
+            title = item.title,
+            iconResId = item.iconResId,
+            isSelected = isSelected,
+            onSelectionChange = { onToggle() },
+        )
+    },
+)
+
+public data class ScrollInfo(
     val currentPair: Int,
     val pairCount: Int,
     val maxScroll: Int,
@@ -167,18 +211,22 @@ data class ScrollInfo(
 @Composable
 private fun SynchronizedChipScrollerPreview() {
     AdaptiveChipsTheme {
-        SynchronizedChipScroller(
+        val state = rememberAdaptiveChipsState(
+            initialSelectedIds = setOf("1", "3", "6"),
+            selectionMode = SelectionMode.Multiple,
+        )
+        AdaptiveChipScroller(
             items = listOf(
-                NoteItemData("1", "Головокружение", R.drawable.ic_chip_placeholder, true),
-                NoteItemData("2", "Головная боль", R.drawable.ic_chip_placeholder, false),
-                NoteItemData("3", "Тошнота", R.drawable.ic_chip_placeholder, true),
-                NoteItemData("4", "Слабость", R.drawable.ic_chip_placeholder, false),
-                NoteItemData("5", "Температура", R.drawable.ic_chip_placeholder, false),
-                NoteItemData("6", "Кашель", R.drawable.ic_chip_placeholder, true),
-                NoteItemData("7", "Боль в груди", R.drawable.ic_chip_placeholder, false),
-                NoteItemData("8", "Одышка", R.drawable.ic_chip_placeholder, false),
+                AdaptiveChipItem("1", "Чип первый", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("2", "Чип второй", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("3", "Чип третий", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("4", "Чип четвертый", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("5", "Чип пятый", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("6", "Чип шестой", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("7", "Чип седьмой", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("8", "Чип восьмой", R.drawable.ic_chip_placeholder),
             ),
-            onItemSelectionChanged = { _, _ -> },
+            state = state,
             modifier = Modifier.padding(vertical = 8.dp),
         )
     }

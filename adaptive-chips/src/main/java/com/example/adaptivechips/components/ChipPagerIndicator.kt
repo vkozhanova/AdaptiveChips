@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.adaptivechips.theme.AdaptiveChipsTheme
 
 @Composable
-fun ChipPagerIndicator(
+public fun ChipPagerIndicator(
     pairCount: Int,
     currentPair: Int,
     modifier: Modifier = Modifier,
@@ -32,16 +32,18 @@ fun ChipPagerIndicator(
 ) {
     if (pairCount <= 1) return
 
-    val primary = MaterialTheme.colorScheme.primary
-    val inactive = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-    val hint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+    val primary = AdaptiveChipsTheme.colors.indicatorActive
+    val inactive = AdaptiveChipsTheme.colors.indicatorInactive
+    val hint = AdaptiveChipsTheme.colors.indicatorHint
 
     val window: List<Int> = remember(pairCount, currentPair, maxVisibleDots) {
         buildWindow(pairCount, currentPair, maxVisibleDots)
     }
 
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(8.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {

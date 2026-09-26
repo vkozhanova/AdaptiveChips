@@ -21,18 +21,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.adaptivechips.components.NoteItemData
-import com.example.adaptivechips.components.NoteSelectBlock
+import com.example.adaptivechips.components.AdaptiveChipItem
+import com.example.adaptivechips.components.AdaptiveChipSelectBlock
+import com.example.adaptivechips.components.SelectionMode
+import com.example.adaptivechips.components.rememberAdaptiveChipsState
+import com.example.adaptivechips.theme.AdaptiveChipDefaults
+import com.example.adaptivechips.theme.AdaptiveChipsDefaults
 import com.example.adaptivechips.theme.AdaptiveChipsTheme
+import com.example.adaptivechips.ui.theme.DemoAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            MaterialTheme {
+            DemoAppTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    AdaptiveChipsTheme {
+                    AdaptiveChipsTheme(
+                        colors = AdaptiveChipsDefaults.colors().copy(
+                            cardBackground = MaterialTheme.colorScheme.tertiaryContainer,
+                            indicatorActive = MaterialTheme.colorScheme.tertiary,
+                            editIconTint = MaterialTheme.colorScheme.tertiary,
+                        ),
+                        chipColors = AdaptiveChipDefaults.colors().copy(
+                            selectedContainer = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f),
+                            selectedBorder = MaterialTheme.colorScheme.tertiary,
+                            checkBackground = MaterialTheme.colorScheme.tertiary,
+                            label = MaterialTheme.colorScheme.onTertiaryContainer,
+                        ),
+                    ) {
                         DemoContent()
                     }
                 }
@@ -44,20 +61,22 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun DemoContent() {
     var isExpanded by remember { mutableStateOf(false) }
-
-    // Список как состояние — клики меняют isSelected и UI перерисовывается.
+    val state = rememberAdaptiveChipsState(
+        initialSelectedIds = setOf("1", "3", "6"),
+        selectionMode = SelectionMode.Multiple,
+    )
     val items = remember {
         mutableStateListOf(
-            NoteItemData("1", "Головокружение", R.drawable.ic_chip_placeholder, true),
-            NoteItemData("2", "Головная боль", R.drawable.ic_chip_placeholder, false),
-            NoteItemData("3", "Тошнота", R.drawable.ic_chip_placeholder, true),
-            NoteItemData("4", "Слабость", R.drawable.ic_chip_placeholder, false),
-            NoteItemData("5", "Температура", R.drawable.ic_chip_placeholder, false),
-            NoteItemData("6", "Кашель", R.drawable.ic_chip_placeholder, true),
-            NoteItemData("7", "Боль в груди", R.drawable.ic_chip_placeholder, false),
-            NoteItemData("8", "Одышка", R.drawable.ic_chip_placeholder, false),
-            NoteItemData("9", "Учащённый пульс", R.drawable.ic_chip_placeholder, false),
-            NoteItemData("10", "Потливость", R.drawable.ic_chip_placeholder, false),
+            AdaptiveChipItem("1", "Головокружение", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("2", "Головная боль", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("3", "Тошнота", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("4", "Слабость", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("5", "Температура", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("6", "Кашель", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("7", "Боль в груди", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("8", "Одышка", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("9", "Учащённый пульс", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("10", "Потливость", R.drawable.ic_chip_placeholder),
         )
     }
 
@@ -69,18 +88,13 @@ private fun DemoContent() {
             .padding(horizontal = 16.dp, vertical = 32.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        NoteSelectBlock(
+        AdaptiveChipSelectBlock(
             title = "Симптомы",
-            noteItems = items,
+            items = items,
+            state = state,
             isExpanded = isExpanded,
             onToggleExpanded = { isExpanded = !isExpanded },
             onEditCategory = {},
-            onItemSelectionChanged = { id, selected ->
-                val index = items.indexOfFirst { it.id == id }
-                if (index >= 0) {
-                    items[index] = items[index].copy(isSelected = selected)
-                }
-            },
         )
     }
 }

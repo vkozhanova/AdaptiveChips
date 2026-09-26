@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,62 +28,68 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.adaptivechips.R
-import com.example.adaptivechips.theme.AdaptiveChipsTheme
+import com.example.adaptivechips.theme.AdaptiveChipTheme
 
 @Composable
 @Suppress("LongParameterList")
-fun NoteItem(
+public fun AdaptiveChip(
     title: String,
-    @DrawableRes iconResId: Int,
     isSelected: Boolean,
     onSelectionChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    @DrawableRes iconResId: Int? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
 ) {
-    val dimens = AdaptiveChipsTheme.dimens
-    val colors = AdaptiveChipsTheme.colors
+    val dimens = AdaptiveChipTheme.dimens
+    val colors = AdaptiveChipTheme.colors
 
     Box(
         modifier = modifier.wrapContentWidth(),
     ) {
         Box(
             modifier = Modifier
-                .clip(RoundedCornerShape(dimens.chipCornerRadius))
-                .height(dimens.chipHeight)
+                .clip(RoundedCornerShape(dimens.cornerRadius))
+                .height(dimens.height)
                 .wrapContentWidth()
                 .background(
                     color = if (isSelected) colors.selectedContainer else colors.unselectedContainer,
-                    shape = RoundedCornerShape(dimens.chipCornerRadius),
+                    shape = RoundedCornerShape(dimens.cornerRadius),
                 )
                 .border(
                     width = if (isSelected) 1.5.dp else 0.dp,
                     color = if (isSelected) colors.selectedBorder else Color.Transparent,
-                    shape = RoundedCornerShape(dimens.chipCornerRadius),
+                    shape = RoundedCornerShape(dimens.cornerRadius),
                 )
-                .clickable { onSelectionChange(!isSelected) },
+                .clickable(enabled = enabled) { onSelectionChange(!isSelected) },
         ) {
             Row(
                 modifier = Modifier
-                    .height(dimens.chipHeight)
+                    .height(dimens.height)
                     .wrapContentWidth()
-                    .padding(horizontal = dimens.chipHorizontalPadding),
+                    .padding(horizontal = dimens.horizontalPadding),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(dimens.chipContentSpacing),
+                horizontalArrangement = Arrangement.spacedBy(dimens.contentSpacing),
             ) {
-                Icon(
-                    painter = painterResource(iconResId),
-                    contentDescription = title,
-                    modifier = Modifier.size(dimens.iconSize),
-                    tint = Color.Unspecified,
-                )
+                when {
+                    leadingIcon != null -> leadingIcon()
+                    iconResId != null -> Icon(
+                        painter = painterResource(iconResId),
+                        contentDescription = title,
+                        modifier = Modifier.size(dimens.iconSize),
+                        tint = Color.Unspecified,
+                    )
+
+                    else -> Spacer(Modifier.width(dimens.iconSize))
+                }
                 Text(
                     text = title,
-                    style = AdaptiveChipsTheme.typography.chipLabel,
+                    style = AdaptiveChipTheme.typography.label,
                     color = colors.label,
                 )
             }
         }
 
-        // Иконка галочки снаружи чипа, позиционируется относительно внешнего Box
         if (isSelected) {
             Box(
                 modifier = Modifier
@@ -112,45 +120,37 @@ fun NoteItem(
 
 @Preview(showBackground = true)
 @Composable
-fun NoteItemPreview() {
-    AdaptiveChipsTheme {
+public fun AdaptiveChipPreview() {
+    AdaptiveChipTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                NoteItem(
+                AdaptiveChip(
                     title = "Чип первый",
-                    iconResId = R.drawable.ic_chip_placeholder,
                     isSelected = false,
                     onSelectionChange = {},
+                    iconResId = R.drawable.ic_chip_placeholder,
                 )
-                NoteItem(
+                AdaptiveChip(
                     title = "Чип второй",
-                    iconResId = R.drawable.ic_chip_placeholder,
                     isSelected = true,
                     onSelectionChange = {},
-                )
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                NoteItem(
-                    title = "Чип третий",
-                    iconResId =R.drawable.ic_chip_placeholder,
-                    isSelected = true,
-                    onSelectionChange = {},
-                )
-                NoteItem(
-                    title = "Чип четвертый",
                     iconResId = R.drawable.ic_chip_placeholder,
-                    isSelected = false,
-                    onSelectionChange = {},
                 )
             }
-            NoteItem(
-                title = "Чип с самым длинным названием",
-                iconResId = R.drawable.ic_chip_placeholder,
-                isSelected = true,
+            AdaptiveChip(
+                title = "Без иконки",
+                isSelected = false,
                 onSelectionChange = {},
+            )
+            AdaptiveChip(
+                title = "Выключен",
+                isSelected = false,
+                onSelectionChange = {},
+                enabled = false,
+                iconResId = R.drawable.ic_chip_placeholder,
             )
         }
     }
