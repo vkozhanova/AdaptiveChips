@@ -39,20 +39,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.adaptivechips.R
 import com.example.adaptivechips.theme.AdaptiveChipsTheme
-import kotlinx.collections.immutable.toPersistentList
 
 @Immutable
-data class NoteItemData(
+public data class AdaptiveChipItem(
     val id: String,
     val title: String,
     @DrawableRes val iconResId: Int,
-    val isSelected: Boolean = false,
 )
 
 @Composable
-fun ExpandedStateGrid(
-    items: List<NoteItemData>,
-    onItemSelectionChanged: (String, Boolean) -> Unit,
+public fun ExpandedChipGrid(
+    items: List<AdaptiveChipItem>,
+    state: AdaptiveChipState,
     modifier: Modifier = Modifier,
 ) {
     val dimens = AdaptiveChipsTheme.dimens
@@ -72,11 +70,11 @@ fun ExpandedStateGrid(
             maxItemsInEachRow = Int.MAX_VALUE,
         ) {
             items.forEach { item ->
-                NoteItem(
+                AdaptiveChip(
                     title = item.title,
                     iconResId = item.iconResId,
-                    isSelected = item.isSelected,
-                    onSelectionChange = { onItemSelectionChanged(item.id, it) },
+                    isSelected = state.isSelected(item.id),
+                    onSelectionChange = { state.toggle(item.id) },
                 )
             }
         }
@@ -84,9 +82,9 @@ fun ExpandedStateGrid(
 }
 
 @Composable
-fun CollapsedNoteGrid(
-    items: List<NoteItemData>,
-    onItemSelectionChanged: (String, Boolean) -> Unit,
+public fun CollapsedChipGrid(
+    items: List<AdaptiveChipItem>,
+    state: AdaptiveChipState,
     onExpandClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -99,9 +97,9 @@ fun CollapsedNoteGrid(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        SynchronizedChipScroller(
+        AdaptiveChipScroller(
             items = items,
-            onItemSelectionChanged = onItemSelectionChanged,
+            state = state,
             onScrollInfo = { scrollInfo = it },
         )
         if (scrollInfo.pairCount > 1) {
@@ -153,21 +151,37 @@ private fun ExpandCollapseButton(
     }
 }
 
+/**
+ * Карточка выбора чипов с разворачиванием.
+ *
+ * @param title заголовок блока. Игнорируется, если задан [titleContent].
+ * @param items список чипов.
+ * @param state состояние выделения.
+ * @param isExpanded режим: свёрнут (две строки со скроллом) или развёрнут (FlowRow).
+ * @param onToggleExpanded колбэк переключения режима.
+ * @param onEditCategory колбэк кнопки редактирования. Если null — иконка не показывается.
+ * @param modifier модификатор корневого Column.
+ * @param titleContent слот заголовка. Заменяет [title], если задан.
+ * @param emptyContent слот пустого состояния. Показывается, если [items] пустой.
+ */
+
 @Suppress("LongParameterList")
 @Composable
-fun NoteSelectBlock(
+public fun AdaptiveChipSelectBlock(
     title: String,
-    noteItems: List<NoteItemData>,
+    items: List<AdaptiveChipItem>,
+    state: AdaptiveChipState,
     isExpanded: Boolean,
     onToggleExpanded: () -> Unit,
-    onEditCategory: () -> Unit,
-    onItemSelectionChanged: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    onEditCategory: (() -> Unit)? = null,
+    titleContent: (@Composable () -> Unit)? = null,
+    emptyContent: (@Composable () -> Unit)? = null,
 ) {
     val dimens = AdaptiveChipsTheme.dimens
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
             .background(MaterialTheme.colorScheme.onPrimary)
@@ -180,25 +194,36 @@ fun NoteSelectBlock(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = title,
-                style = AdaptiveChipsTheme.typography.sectionTitle,
-            )
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_chip_edit),
-                contentDescription = title,
-                modifier = Modifier
-                    .size(15.dp)
-                    .clickable(onClick = onEditCategory),
-                tint = MaterialTheme.colorScheme.secondary,
-            )
+            if (titleContent != null) {
+                titleContent()
+            } else {
+                Text(
+                    text = title,
+                    style = AdaptiveChipsTheme.typography.sectionTitle,
+                )
+            }
+            if (onEditCategory != null) {
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_chip_edit),
+                    contentDescription = title,
+                    modifier = Modifier
+                        .size(15.dp)
+                        .clickable(onClick = onEditCategory),
+                    tint = MaterialTheme.colorScheme.secondary,
+                )
+            }
         }
         Spacer(modifier = Modifier.height(12.dp))
 
+        if (items.isEmpty() && emptyContent != null) {
+            emptyContent()
+            return@Column
+        }
+
         if (isExpanded) {
-            ExpandedStateGrid(
-                items = noteItems,
-                onItemSelectionChanged = onItemSelectionChanged,
+            ExpandedChipGrid(
+                items = items,
+                state = state,
             )
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(
@@ -213,9 +238,9 @@ fun NoteSelectBlock(
                 modifier = Modifier.rotate(180f)
             )
         } else {
-            CollapsedNoteGrid(
-                items = noteItems,
-                onItemSelectionChanged = onItemSelectionChanged,
+            CollapsedChipGrid(
+                items = items,
+                state = state,
                 onExpandClick = onToggleExpanded,
             )
         }
@@ -224,115 +249,34 @@ fun NoteSelectBlock(
 
 @Preview(showBackground = true, locale = "ru")
 @Composable
-fun NoteSelectBlockPreview() {
+private fun AdaptiveChipSelectBlockPreview() {
     AdaptiveChipsTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            NoteSelectBlock(
-                title = "Чипы разной длины",
-                noteItems = listOf(
-                    NoteItemData(
-                        id = "1",
-                        title = "Чип первый",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = true,
-                    ),
-                    NoteItemData(
-                        id = "2",
-                        title = "Чип второй",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = false,
-                    ),
-                    NoteItemData(
-                        id = "3",
-                        title = "Чип третий",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = true,
-                    ),
-                    NoteItemData(
-                        id = "4",
-                        title = "Чип четвертый",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = false,
-                    ),
-                    NoteItemData(
-                        id = "5",
-                        title = "Чип пятый",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = false,
-                    ),
-                    NoteItemData(
-                        id = "6",
-                        title = "Чип шестой",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = true,
-                    ),
-                ).toPersistentList(),
-                isExpanded = false,
-                onToggleExpanded = {},
-                onEditCategory = {},
-                onItemSelectionChanged = { _, _ -> },
+            var isExpanded by remember { mutableStateOf(false) }
+            val state = rememberAdaptiveChipsState(
+                initialSelectedIds = setOf("1", "3"),
+                selectionMode = SelectionMode.Multiple,
             )
-            // Пример с развернутым состоянием
-            var isExpanded by remember { mutableStateOf(true) }
-            NoteSelectBlock(
+
+            AdaptiveChipSelectBlock(
                 title = "Чипы разной длины",
-                noteItems = listOf(
-                    NoteItemData(
-                        id = "1",
-                        title = "Чип первый",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = false,
-                    ),
-                    NoteItemData(
-                        id = "2",
-                        title = "Чип второй",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = false,
-                    ),
-                    NoteItemData(
-                        id = "3",
-                        title = "Чип третий",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = true,
-                    ),
-                    NoteItemData(
-                        id = "4",
-                        title = "Чип четвертый",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = false,
-                    ),
-                    NoteItemData(
-                        id = "5",
-                        title = "Чип пятый",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = false,
-                    ),
-                    NoteItemData(
-                        id = "6",
-                        title = "Чип шестой",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = true,
-                    ),
-                    NoteItemData(
-                        id = "7",
-                        title = "Чип седьмой",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = false,
-                    ),
-                    NoteItemData(
-                        id = "8",
-                        title = "Чип восьмой",
-                        iconResId = R.drawable.ic_chip_placeholder,
-                        isSelected = true,
-                    ),
-                ).toPersistentList(),
+                items = listOf(
+                    AdaptiveChipItem("1", "Чип первый", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("2", "Чип второй", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("3", "Чип третий", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("4", "Чип четвертый", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("5", "Чип пятый", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("6", "Чип шестой", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("7", "Чип седьмой", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("8", "Чип восьмой", R.drawable.ic_chip_placeholder),
+                ),
+                state = state,
                 isExpanded = isExpanded,
                 onToggleExpanded = { isExpanded = !isExpanded },
                 onEditCategory = {},
-                onItemSelectionChanged = { _, _ -> },
             )
         }
     }

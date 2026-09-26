@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
  */
 
 @Immutable
-data class SelectionMode(
+public data class SelectionMode(
     val allowMultiple: Boolean = true,
     val minSelected: Int = 0,
     val maxSelected: Int = Int.MAX_VALUE,
@@ -28,23 +28,23 @@ data class SelectionMode(
         require(minSelected >= 0) { "minSelected must be >= 0" }
         require(maxSelected >= minSelected) { "maxSelected must be >= minSelected" }
         if (!allowMultiple) {
-            require(maxSelected <= 1) { "Single made: maxSelected must be <= 1" }
+            require(maxSelected <= 1) { "Single mode: maxSelected must be <= 1" }
         }
     }
 
-    //    Можно выделить только один чип, клик по другому переключает
-    companion object {
-        val Single: SelectionMode = SelectionMode(
+    /** Можно выделить только один чип, клик по другому переключает */
+    public companion object {
+        public val Single: SelectionMode = SelectionMode(
             allowMultiple = false,
             minSelected = 0,
             maxSelected = 1,
         )
 
-        //    Можно выделить сколько  угодно
-        val Multiple: SelectionMode = SelectionMode()
+        /** Можно выделить сколько угодно */
+        public val Multiple: SelectionMode = SelectionMode()
 
-        //    Ограничение сверху или снизу
-        fun limited(min: Int = 0, max: Int = Int.MAX_VALUE): SelectionMode =
+        /** Ограничение сверху или снизу */
+        public fun limited(min: Int = 0, max: Int = Int.MAX_VALUE): SelectionMode =
             SelectionMode(allowMultiple = true, minSelected = min, maxSelected = max)
     }
 }
@@ -52,7 +52,7 @@ data class SelectionMode(
 /**
  * Состояние выделения для набора чипов.
  *
- * Создавание через [rememberAdaptiveChipState] или вручную:
+ * Создается через rememberAdaptiveChipState или вручную:
  * ```
  * val state = AdaptiveChipState(
  *     initialSelectedIds = setOf("1", "3"),
@@ -61,24 +61,26 @@ data class SelectionMode(
  * ```
  */
 @Stable
-class AdaptiveChipState internal constructor(
+public class AdaptiveChipState internal constructor(
     initialSelectedIds: Set<String>,
-    val selectionMode: SelectionMode,
+    public val selectionMode: SelectionMode,
 ) {
-    var selectedIds: Set<String> by mutableStateOf(initialSelectedIds)
+    public var selectedIds: Set<String> by mutableStateOf(initialSelectedIds)
         private set
 
-    //    Текущий набор выделенных id
-    val selectionCount: Int
+    /** Текущий набор выделенных id */
+    public val selectionCount: Int
         get() = selectedIds.size
 
-    fun isSelected(id: String): Boolean = id in selectedIds
+    public fun isSelected(id: String): Boolean = id in selectedIds
 
-    //    Переключает выделение
-    fun toggle(id: String) = if (id in selectedIds) deselect(id) else select(id)
+    /** Переключает выделение */
+    public fun toggle(id: String) {
+        if (id in selectedIds) deselect(id) else select(id)
+    }
 
-    //    Выделяет чип с учетом [selectionMode]. Ничего не делает, если нельзя
-    fun select(id: String) {
+    /** Выделяет чип с учетом [selectionMode]. Ничего не делает, если нельзя */
+    public fun select(id: String) {
         if (id in selectedIds) return
         selectedIds = when {
             !selectionMode.allowMultiple -> setOf(id)
@@ -87,15 +89,15 @@ class AdaptiveChipState internal constructor(
         }
     }
 
-    //   Снимает выделение, если это не нарушит [SelectionMode.minSelected]
-    fun deselect(id: String) {
+    /** Снимает выделение, если это не нарушит [SelectionMode.minSelected] */
+    public fun deselect(id: String) {
         if (id !in selectedIds) return
         if (selectedIds.size <= selectionMode.minSelected) return
         selectedIds = selectedIds - id
     }
 
-    //    Чнимает все выделение, елси это допустимо режимом
-    fun clear() {
+    /** Снимает все выделение, если это допустимо режимом */
+    public fun clear() {
         if (selectionMode.minSelected > 0) return
         selectedIds = emptySet()
     }
@@ -105,7 +107,7 @@ class AdaptiveChipState internal constructor(
      * В режиме Single оставит максимум один id, в Limited — не больше max.
      * minSelected здесь не проверяется: считается, что вызывающий знает, что делает.
      */
-    fun replace(newSelectedIds: Set<String>) {
+    public fun replace(newSelectedIds: Set<String>) {
         selectedIds = when {
             !selectionMode.allowMultiple -> newSelectedIds.take(1).toSet()
             newSelectedIds.size > selectionMode.maxSelected -> newSelectedIds.take(selectionMode.maxSelected)
@@ -115,8 +117,8 @@ class AdaptiveChipState internal constructor(
         }
     }
 
-    companion object {
-        val Saver: Saver<AdaptiveChipState, Any> = listSaver(
+    public companion object {
+        public val Saver: Saver<AdaptiveChipState, Any> = listSaver(
             save = { state ->
                 listOf(
                     state.selectedIds.toList(),
@@ -146,7 +148,7 @@ class AdaptiveChipState internal constructor(
  * режим меняется редко и это лучше, чем тащить несовместимое состояние.
  */
 @Composable
-fun rememberAdaptiveChipsState(
+public fun rememberAdaptiveChipsState(
     initialSelectedIds: Set<String> = emptySet(),
     selectionMode: SelectionMode = SelectionMode.Multiple,
 ): AdaptiveChipState = rememberSaveable(

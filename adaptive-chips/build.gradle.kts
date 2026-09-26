@@ -22,12 +22,14 @@ android {
     buildFeatures {
         compose = true
     }
+}
 
+kotlin {
+    explicitApi()
 }
 
 dependencies {
-    implementation(libs.kotlinx.collections.immutable.v038)
-    implementation(libs.kotlinx.collections.immutable)
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.compose.runtime)
