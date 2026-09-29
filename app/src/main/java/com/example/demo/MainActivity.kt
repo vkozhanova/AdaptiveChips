@@ -21,13 +21,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.adaptivechips.components.AdaptiveChipItem
-import com.example.adaptivechips.components.AdaptiveChipSelectBlock
-import com.example.adaptivechips.components.SelectionMode
-import com.example.adaptivechips.components.rememberAdaptiveChipsState
-import com.example.adaptivechips.theme.AdaptiveChipDefaults
-import com.example.adaptivechips.theme.AdaptiveChipsDefaults
-import com.example.adaptivechips.theme.AdaptiveChipsTheme
+import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChipItem
+import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChipSelectBlock
+import io.github.vkozhanova.adaptivechipselect.components.SelectionMode
+import io.github.vkozhanova.adaptivechipselect.components.rememberAdaptiveChipsState
+import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipDefaults
+import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsDefaults
+import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
 import com.example.adaptivechips.ui.theme.DemoAppTheme
 
 class MainActivity : ComponentActivity() {

@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AdaptiveChips"
 include(":app")
-include(":adaptive-chips")
+include(":adaptive-chip-select")
