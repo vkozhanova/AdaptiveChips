@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+
     implementation(project(":adaptive-chip-select"))
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
