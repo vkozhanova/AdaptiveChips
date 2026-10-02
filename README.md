@@ -1,44 +1,37 @@
 # adaptive-chip-select
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![GitHub](https://img.shields.io/badge/GitHub-vkozhanova%2FAdaptiveChips-181717?logo=github)](https://github.com/vkozhanova/AdaptiveChips)
 
 Адаптивный селектор чипов для Compose с синхронным скроллом рядов,
 магнитным снапом, индикатором и переключением свёрнутого / развёрнутого режима.
 
 ## Зачем
 
-Стандартный `FlowRow` раскладывает чипы по строкам, но как только строк
-становится больше одной, вы упираетесь в ограничения:
+Стандартный `FlowRow` раскладывает чипы по строкам. Как только строк становится
+больше одной, появляются ограничения:
 
-- строки не скроллятся вместе и каждая едет сама по себе;
-- нет магнитного снапа, и остановка скролла всегда происходит «где-то между»;
-- нет индикатора, который честно говорит «есть ли ещё контент впереди»;
-- переход «свернутое → развернутое» приходится писать руками;
-- состояние выделения (single / multiple / с ограничениями) — тоже ваша задача.
+| Чего нет у `FlowRow` | Что даёт `adaptive-chip-select`                            |
+|---|------------------------------------------------------------|
+| Ряды скроллятся независимо друг от друга | Один общий `ScrollState` и все ряды двигаются синхронно    |
+| Скролл останавливается «где-то между» | Магнитный снап к ближайшей группе чипов                    |
+| Не видно, есть ли ещё контент впереди | Индикатор с подсказкой о продолжении                       |
+| Развернуть / свернуть — ваша задача | Готовый переход: 2–3 ряда со скроллом ↔ полный `FlowRow`   |
+| Состояния выделения нет | `AdaptiveChipState` с режимами Single / Multiple / Limited |
+| Число рядов не настраивается | Для этой задачи есть параметр `rowCount`                   |
 
-**adaptive-chip-select** закрывает всё это. Один компонент решает все шесть проблем.
-
-### Сравнение
-
-| Возможность | `FlowRow` | `LazyRow` | **adaptive-chip-select** |
-|---|---|---|---|
-| Много рядов | ✅ | ❌ | ✅ |
-| Синхронный скролл рядов | ❌ | — | ✅ |
-| Магнитный снап | ❌ | ⚠️ | ✅ |
-| Индикатор с подсказкой | ❌ | ❌ | ✅ |
-| Свёрнуто / развёрнуто | ❌ | ❌ | ✅ |
-| Состояние выделения | ❌ | ❌ | ✅ |
+Один компонент решает все эти задачи.
 
 ## Возможности
 
 - **Свёрнутый режим** — N рядов чипов с одним общим `ScrollState`.
-- **Произвольное количество строк** — пользователь сам задает их число.
+- **Произвольное количество рядов** — задаётся параметром `rowCount`.
 - **Развёрнутый режим** — `FlowRow` в ограниченном контейнере.
 - **Магнитный снап** к группам чипов после остановки скролла.
 - **Индикатор** со скользящим окном: при большом числе групп показывает окно
   из 7 точек, крайняя правая уменьшена, пока есть куда скроллить.
 - **`AdaptiveChipState`** — Single / Multiple / Limited(min, max).
-  AdaptiveChipState — Single / Multiple / Limited(min, max), сохраняется через `rememberSaveable`.
+  Сохраняется через `rememberSaveable` и переживает пересоздание Activity.
 - **Слоты** — можно использовать свой чип (`FilterChip`, `AssistChip`, что угодно),
   свой заголовок, своё пустое состояние.
 - **Двухуровневая тема** — цвета и размеры отдельно для чипа и для контейнера.
@@ -51,14 +44,59 @@
 
 ## Установка
 
+Пакет публикуется в [GitHub Packages](https://github.com/vkozhanova/AdaptiveChips/packages).
+
+### 1. Добавьте Maven-репозиторий
+
+В `settings.gradle.kts`:
+
 ```kotlin
-// build.gradle.kts (module)
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://maven.pkg.github.com/vkozhanova/AdaptiveChips")
+            credentials {
+                username = providers.gradleProperty("gcp_username").orNull
+                    ?: System.getenv("GITHUB_ACTOR")
+                password = providers.gradleProperty("gcp_token").orNull
+                    ?: System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+```
+
+### 2. Добавьте зависимость
+
+В `build.gradle.kts` модуля:
+
+```kotlin
 dependencies {
     implementation("io.github.vkozhanova:adaptive-chip-select:0.1.0")
 }
 ```
 
-> Версия `0.1.0` — первая публичная.
+### 3. Настройте доступ
+
+GitHub Packages требует токен **даже для публичных пакетов**. Создайте
+Personal Access Token со scope `read:packages`:
+
+1. https://github.com/settings/tokens → `Generate new token (classic)`.
+2. Scopes: `read:packages`.
+3. Скопируйте токен (`ghp_...`).
+
+Пропишите его в `~/.gradle/gradle.properties` — файл вне проекта, в git не попадёт:
+
+```properties
+gcp_username=your-github-username
+gcp_token=ghp_ваш_токен
+```
+
+> Библиотека пока не опубликована в Maven Central. Когда это произойдёт,
+> установка сократится до одной строки `implementation(...)` без настройки
+> репозитория и токена.
 
 ## Быстрый старт
 
@@ -74,9 +112,9 @@ fun SimpleSelector() {
 
     val items = remember {
         listOf(
-          AdaptiveChipItem("1", "Chip one", R.drawable.ic_chip_1),
-          AdaptiveChipItem("2", "Chip two", R.drawable.ic_chip_2),
-          AdaptiveChipItem("3", "Chip three", R.drawable.ic_chip_3),
+            AdaptiveChipItem("1", "Chip one", R.drawable.ic_chip_1),
+            AdaptiveChipItem("2", "Chip two", R.drawable.ic_chip_2),
+            AdaptiveChipItem("3", "Chip three", R.drawable.ic_chip_3),
         )
     }
 
@@ -86,7 +124,7 @@ fun SimpleSelector() {
         state = state,
         isExpanded = isExpanded,
         onToggleExpanded = { isExpanded = !isExpanded },
-        onEditCategory = { /* открыть редактирование */ },
+        onEditCategory = { /* open edit */ },
     )
 }
 ```
@@ -130,14 +168,14 @@ state.clear()                // снять всё
 state.replace(setOf("1"))    // заменить набор
 ```
 
-- rememberAdaptiveChipsState использует rememberSaveable — состояние
+`rememberAdaptiveChipsState` использует `rememberSaveable` — состояние
 переживает поворот экрана и пересоздание Activity.
 
 ### Темизация
 
 Есть два уровня темы:
 
-- `AdaptiveChipTheme` — цвета и размеры самого чипа.
+- `AdaptiveChipTheme` — цвета и размеры самого чипа;
 - `AdaptiveChipsTheme` — цвета и размеры контейнера (карточки, индикатора, divider'ов).
 
 `AdaptiveChipsTheme(...)` умеет прокидывать оба уровня сразу — так удобнее:
@@ -206,7 +244,7 @@ AdaptiveChipScroller(
 )
 ```
 
-Снап, скролл и индикатор работают так же — они не знают, как выглядит ваш чип.
+Снап, скролл и индикатор работают так же, они не знают, как выглядит ваш чип.
 
 ### Слоты `AdaptiveChipSelectBlock`
 
@@ -254,6 +292,9 @@ AdaptiveChipSelectBlock(
 )
 ```
 
+Параметр влияет только на свёрнутый режим. В развёрнутом используется
+`FlowRow`, число рядов определяется шириной контейнера.
+
 ## Структура
 
 ```
@@ -261,8 +302,8 @@ adaptive-chip-select/
 ├── components/
 │   ├── AdaptiveChip.kt             — базовый чип
 │   ├── AdaptiveChipItem.kt         — модель
-│   ├── AdaptiveChipScroller.kt     — синхронный скролл + снап 
-│   ├── AdaptiveChipSelectBlock.kt  — карточка с раскрытием 
+│   ├── AdaptiveChipScroller.kt     — синхронный скролл + снап
+│   ├── AdaptiveChipSelectBlock.kt  — карточка с раскрытием
 │   ├── AdaptiveChipState.kt        — состояние выделения
 │   ├── ChipPagerIndicator.kt       — индикатор
 │   └── ScrollInfo.kt               — позиция скролла
@@ -277,6 +318,17 @@ adaptive-chip-select/
 ./gradlew :adaptive-chip-select:build
 ./gradlew :adaptive-chip-select:test
 ```
+
+## Автор
+Vera Kozhanova
+
+GitHub: [@vkozhanova](https://github.com/vkozhanova)
+
+## Ссылки
+
+- [Исходный код](https://github.com/vkozhanova/AdaptiveChips)
+- [Issues](https://github.com/vkozhanova/AdaptiveChips/issues)
+- [Packages](https://github.com/vkozhanova/AdaptiveChips/packages)
 
 ## Лицензия
 
