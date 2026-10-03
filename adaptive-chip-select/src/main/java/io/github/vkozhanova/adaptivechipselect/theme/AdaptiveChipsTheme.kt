@@ -11,6 +11,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChip
+import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChipSelectBlock
+import io.github.vkozhanova.adaptivechipselect.components.CollapsedChipGrid
+import io.github.vkozhanova.adaptivechipselect.components.ChipPagerIndicator
+
+/**
+ * Цвета, которые используют контейнерные компоненты — [AdaptiveChipSelectBlock],
+ * [CollapsedChipGrid], [ChipPagerIndicator] и разделители.
+ *
+ * Не путать с [AdaptiveChipColors] — та отвечает за сам чип.
+ *
+ * Получить значения:
+ * - [AdaptiveChipsDefaults.colors] — нейтральные baseline;
+ * - [AdaptiveChipsDefaults.materialColors] — из текущей `MaterialTheme.colorScheme`.
+ */
 
 @Immutable
 public data class AdaptiveChipsColors(
@@ -23,6 +38,13 @@ public data class AdaptiveChipsColors(
     val indicatorHint: Color,
 )
 
+/**
+ * Размеры и отступы контейнера: промежутки между чипами, между рядами,
+ * отступ от края экрана и максимальная высота развёрнутого режима.
+ *
+ * Не путать с [AdaptiveChipDimens] — там размеры самого чипа.
+ */
+
 @Immutable
 public data class AdaptiveChipsDimens(
     val itemSpacing: Dp = 8.dp,
@@ -31,10 +53,23 @@ public data class AdaptiveChipsDimens(
     val maxCollapsedHeight: Dp = 400.dp,
 )
 
+/**
+ * Типографика контейнера. Сейчас содержит стиль заголовка карточки —
+ * того, что передаётся в `title` у [AdaptiveChipSelectBlock].
+ */
+
 @Immutable
 public data class AdaptiveChipsTypography(
     val sectionTitle: TextStyle,
 )
+
+/**
+ * Точки входа для дефолтных значений темы контейнера.
+ *
+ * - [colors] / [dimens] / [typography] — baseline, не зависят от Material;
+ * - [materialColors] — цвета, выведенные из `MaterialTheme.colorScheme`;
+ *   обязательно вызывать внутри `MaterialTheme`.
+ */
 
 public object AdaptiveChipsDefaults {
 
@@ -84,6 +119,20 @@ internal val LocalAdaptiveChipsTypography = staticCompositionLocalOf<AdaptiveChi
     error("AdaptiveChipsTheme is not provided")
 }
 
+/**
+ * Доступ к текущим значениям темы контейнера из любого `@Composable`.
+ * Значения берутся из ближайшего [AdaptiveChipsTheme] в дереве композиции.
+ *
+ * Используйте:
+ * ```
+ * val dimens = AdaptiveChipsTheme.dimens
+ * val colors = AdaptiveChipsTheme.colors
+ * ```
+ *
+ * Если [AdaptiveChipsTheme] не обёрнут вокруг — рантайм-ошибка
+ * «AdaptiveChipsTheme is not provided».
+ */
+
 public object AdaptiveChipsTheme {
     public val colors: AdaptiveChipsColors
         @Composable get() = LocalAdaptiveChipsColors.current
@@ -92,6 +141,40 @@ public object AdaptiveChipsTheme {
     public val typography: AdaptiveChipsTypography
         @Composable get() = LocalAdaptiveChipsTypography.current
 }
+
+/**
+ * Единая точка входа для настройки темы библиотеки.
+ *
+ * Прокидывает **оба** уровня сразу:
+ * - container-тему ([AdaptiveChipsColors], [AdaptiveChipsDimens],
+ *   [AdaptiveChipsTypography]) — для [AdaptiveChipSelectBlock],
+ *   [CollapsedChipGrid], [ChipPagerIndicator];
+ * - chip-тему ([AdaptiveChipColors], [AdaptiveChipDimens],
+ *   [AdaptiveChipTypography]) — для [AdaptiveChip].
+ *
+ * Если нужен только один уровень — используйте [AdaptiveChipTheme]
+ * отдельно.
+ *
+ * Все параметры по умолчанию — baseline-значения. Для связки с Material 3
+ * передайте `materialColors()` из [AdaptiveChipsDefaults] и
+ * [AdaptiveChipDefaults]:
+ * ```
+ * AdaptiveChipsTheme(
+ *     colors = AdaptiveChipsDefaults.materialColors(),
+ *     chipColors = AdaptiveChipDefaults.materialColors(),
+ * ) {
+ *     // ...
+ * }
+ * ```
+ *
+ * @param colors цвета контейнера
+ * @param dimens размеры контейнера
+ * @param typography типографика контейнера
+ * @param chipColors цвета чипа
+ * @param chipDimens размеры чипа
+ * @param chipTypography типографика чипа
+ * @param content содержимое, к которому применяется тема
+ */
 
 @Composable
 public fun AdaptiveChipsTheme(

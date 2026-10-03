@@ -10,6 +10,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChip
+import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChipSelectBlock
+import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChipScroller
+
+/**
+ * Цвета, которые использует [AdaptiveChip].
+ *
+ * Не путать с [AdaptiveChipsColors] — та отвечает за контейнер
+ * (карточку, разделители, индикатор).
+ *
+ * Получить значения:
+ * - [AdaptiveChipDefaults.colors] — нейтральные baseline-цвета,
+ *   не зависящие от `MaterialTheme`;
+ * - [AdaptiveChipDefaults.materialColors] — производные от текущей
+ *   `MaterialTheme.colorScheme` (вызывать внутри `MaterialTheme`).
+ */
 
 @Immutable
 public data class AdaptiveChipColors(
@@ -21,6 +37,14 @@ public data class AdaptiveChipColors(
     val checkIconTint: Color,
     val label: Color,
 )
+
+/**
+ * Размеры и отступы [AdaptiveChip]: высота, скругление, отступы под иконку,
+ * размер галочки выделения и её смещения.
+ *
+ * Значения по умолчанию подобраны так, чтобы чип смотрелся в одном ряду
+ * с Material 3 FilterChip. Меняйте только если нужен другой визуальный язык.
+ */
 
 @Immutable
 public data class AdaptiveChipDimens(
@@ -36,10 +60,23 @@ public data class AdaptiveChipDimens(
     val checkOffsetY: Dp = (-2).dp,
 )
 
+/**
+ * Типографика [AdaptiveChip]. Сейчас содержит только стиль подписи —
+ * на чипе больше нет текстовых элементов.
+ */
+
 @Immutable
 public data class AdaptiveChipTypography(
     val label: TextStyle,
 )
+
+/**
+ * Точки входа для дефолтных значений темы чипа.
+ *
+ * - [colors] / [dimens] / [typography] — baseline, не зависят от Material;
+ * - [materialColors] — цвета, выведенные из `MaterialTheme.colorScheme`;
+ *   обязательно вызывать внутри `MaterialTheme`.
+ */
 
 public object AdaptiveChipDefaults {
 
@@ -86,6 +123,20 @@ internal val LocalAdaptiveChipTypography = staticCompositionLocalOf<AdaptiveChip
     error("AdaptiveChipTheme is not provided")
 }
 
+/**
+ * Доступ к текущим значениям темы чипа из любого `@Composable`.
+ * Значения берутся из ближайшего [AdaptiveChipTheme] в дереве композиции.
+ *
+ * Используйте:
+ * ```
+ * val dimens = AdaptiveChipTheme.dimens
+ * val colors = AdaptiveChipTheme.colors
+ * ```
+ *
+ * Если [AdaptiveChipTheme] не обёрнут вокруг — рантайм-ошибка
+ * «AdaptiveChipTheme is not provided».
+ */
+
 public object AdaptiveChipTheme {
     public val colors: AdaptiveChipColors
         @Composable get() = LocalAdaptiveChipColors.current
@@ -94,6 +145,20 @@ public object AdaptiveChipTheme {
     public val typography: AdaptiveChipTypography
         @Composable get() = LocalAdaptiveChipTypography.current
 }
+
+/**
+ * Провайдер темы для [AdaptiveChip] и других чип-специфичных компонентов.
+ *
+ * Оборачивайте дерево, если используете [AdaptiveChip] **отдельно** от
+ * [AdaptiveChipsTheme]. Когда используете [AdaptiveChipSelectBlock]
+ * или [AdaptiveChipScroller], достаточно [AdaptiveChipsTheme] — он
+ * прокидывает и chip-тему тоже.
+ *
+ * @param colors цвета чипа
+ * @param dimens размеры чипа
+ * @param typography типографика чипа
+ * @param content содержимое, к которому применяется тема
+ */
 
 @Composable
 public fun AdaptiveChipTheme(
