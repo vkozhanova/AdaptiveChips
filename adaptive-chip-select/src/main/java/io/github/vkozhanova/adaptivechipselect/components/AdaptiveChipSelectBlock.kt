@@ -38,6 +38,26 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.vkozhanova.adaptivechipselect.R
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
+import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsDimens
+
+/**
+ * Развёрнутый режим: чипы раскладываются через `FlowRow` и переносятся
+ * на следующую строку по мере заполнения ширины контейнера.
+ *
+ * В отличие от [CollapsedChipGrid], здесь нет ограничения по числу рядов —
+ * их количество определяется шириной контейнера. Если контент не влезает
+ * по высоте, включается вертикальный скролл с ограничением
+ * [AdaptiveChipsDimens.maxCollapsedHeight].
+ *
+ * Обычно используется не напрямую, а через [AdaptiveChipSelectBlock].
+ *
+ * @param items список чипов
+ * @param state состояние выделения
+ * @param modifier модификатор корневого Box
+ *
+ * @see AdaptiveChipSelectBlock
+ * @see CollapsedChipGrid
+ */
 
 @Composable
 public fun ExpandedChipGrid(
@@ -72,6 +92,28 @@ public fun ExpandedChipGrid(
         }
     }
 }
+
+/**
+ * Свёрнутый режим: N рядов чипов с синхронным горизонтальным скроллом
+ * и магнитным снапом к группам.
+ *
+ * Делегирует раскладку и поведение скролла в [AdaptiveChipScroller].
+ * Под скроллером показывает [ChipPagerIndicator] — но только если
+ * групп больше одной. Кнопка разворачивания (divider + стрелка)
+ * появляется, только если контент реально не влезает по ширине
+ * (`maxScroll > 0` в [ScrollInfo]).
+ *
+ * Обычно используется не напрямую, а через [AdaptiveChipSelectBlock],
+ * который переключает [CollapsedChipGrid] и [ExpandedChipGrid].
+ *
+ * @param items список чипов
+ * @param state состояние выделения
+ * @param onExpandClick колбэк клика по кнопке «Развернуть»
+ * @param modifier модификатор корневого Column
+ *
+ * @see AdaptiveChipSelectBlock
+ * @see ExpandedChipGrid
+ */
 
 @Composable
 public fun CollapsedChipGrid(

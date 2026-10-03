@@ -30,6 +30,38 @@ import androidx.compose.ui.unit.dp
 import io.github.vkozhanova.adaptivechipselect.R
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipTheme
 
+/**
+ * Базовый чип: иконка слева, подпись, опциональная галочка выделения
+ * в правом верхнем углу.
+ *
+ * Компонент **stateless** — принимает текущее состояние [isSelected]
+ * и уведомляет об изменении через [onSelectionChange]. Для управления
+ * выделением целого набора используйте [AdaptiveChipState] вместе
+ * с [AdaptiveChipSelectBlock] или [AdaptiveChipScroller].
+ *
+ * Иконка задаётся одним из двух способов:
+ * - [iconResId] — drawable-ресурс (Android-only);
+ * - [leadingIcon] — слот, где можно нарисовать что угодно
+ *   (в том числе вектор из `ImageVector` для KMP-совместимости).
+ *
+ * Если заданы оба — приоритет у [leadingIcon]. Если не задан ни один —
+ * на месте иконки останется пустое пространство, чтобы выравнивание
+ * чипов друг под другом не съезжало.
+ *
+ * @param title текст на чипе
+ * @param isSelected выделен ли чип в данный момент
+ * @param onSelectionChange вызывается при клике с новым значением
+ *        (инвертированным от [isSelected]); не вызывается, если [enabled] = false
+ * @param modifier модификатор корневого контейнера
+ * @param enabled если false — клик игнорируется, визуальных изменений нет
+ * @param iconResId идентификатор drawable для иконки слева;
+ *        используется, если [leadingIcon] не задан
+ * @param leadingIcon слот для кастомной иконки; имеет приоритет над [iconResId]
+ *
+ * @see AdaptiveChipItem
+ * @see AdaptiveChipSelectBlock
+ */
+
 @Composable
 @Suppress("LongParameterList")
 public fun AdaptiveChip(
@@ -120,7 +152,7 @@ public fun AdaptiveChip(
 
 @Preview(showBackground = true)
 @Composable
-public fun AdaptiveChipPreview() {
+private fun AdaptiveChipPreview() {
     AdaptiveChipTheme {
         Column(
             modifier = Modifier.padding(16.dp),

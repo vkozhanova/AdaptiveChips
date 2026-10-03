@@ -23,6 +23,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
 
+/**
+ * Индикатор позиции скролла: ряд точек, где активная соответствует
+ * текущей группе чипов.
+ *
+ * При большом числе групп ([groupCount] > [maxVisibleDots]) показывается
+ * не всё, а **скользящее окно** из [maxVisibleDots] точек, центрированное
+ * на текущей позиции и прижимающееся к краям. Крайняя правая точка окна
+ * уменьшена, пока пользователь не доскроллил до конца — это визуальная
+ * подсказка, что контент продолжается.
+ *
+ * Если [groupCount] ≤ 1, компонент ничего не рисует.
+ *
+ * Обычно используется вместе с [AdaptiveChipScroller] через [ScrollInfo]:
+ * скроллер публикует `ScrollInfo`, а индикатор получает из него
+ * `groupCount` и `currentGroup`.
+ *
+ * @param groupCount общее число групп чипов (точек на полном индикаторе)
+ * @param currentGroup индекс активной группы (0-based)
+ * @param modifier модификатор корневого Row
+ * @param maxVisibleDots максимальное число одновременно видимых точек;
+ *        при превышении включается скользящее окно
+ *
+ * @see ScrollInfo
+ */
+
 @Composable
 public fun ChipPagerIndicator(
     groupCount: Int,

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     id("maven-publish")
+    id("org.jetbrains.dokka") version "2.2.0"
 }
 
 android {
@@ -25,6 +26,13 @@ android {
         singleVariant("release") {
             withSourcesJar()
         }
+    }
+}
+
+dokka {
+    moduleName.set("adaptive-chip-select")
+    dokkaPublications.html {
+        outputDirectory.set(layout.buildDirectory.dir("dokka/html"))
     }
 }
 
