@@ -49,7 +49,7 @@ jobs:
               <title>adaptive-chip-select</title>
               <style>
                   body { max-width: 720px; margin: 4em auto; padding: 0 1em;
-                         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                         font-family: -apple-system, BlinkMacSystemFont, "Segue UI", sans-serif;
                          line-height: 1.6; color: #e6edf3;
                          background: #0d1117; }
                   h1 { font-size: 2em; margin-bottom: 0.2em; color: #e6edf3; }
@@ -72,7 +72,6 @@ jobs:
               <div class="links">
                   <a class="primary" href="api/">API Documentation</a>
                   <a href="https://github.com/vkozhanova/AdaptiveChips">GitHub</a>
-                  <a href="https://github.com/vkozhanova/AdaptiveChips#readme">README</a>
                   <a href="https://github.com/vkozhanova/AdaptiveChips/issues">Issues</a>
               </div>
           </body>
