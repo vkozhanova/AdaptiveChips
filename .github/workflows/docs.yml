@@ -2,7 +2,7 @@ name: Docs
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -50,18 +50,20 @@ jobs:
               <style>
                   body { max-width: 720px; margin: 4em auto; padding: 0 1em;
                          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-                         line-height: 1.6; color: #24292f; }
-                  h1 { font-size: 2em; margin-bottom: 0.2em; }
-                  .subtitle { color: #57606a; margin-bottom: 2em; }
+                         line-height: 1.6; color: #e6edf3;
+                         background: #0d1117; }
+                  h1 { font-size: 2em; margin-bottom: 0.2em; color: #e6edf3; }
+                  .subtitle { color: #7d8590; margin-bottom: 2em; }
                   .links { display: flex; gap: 1em; flex-wrap: wrap; }
                   .links a { display: inline-block; padding: 0.6em 1.2em;
-                             border: 1px solid #d0d7de; border-radius: 6px;
-                             text-decoration: none; color: #0969da;
-                             font-weight: 500; }
-                  .links a:hover { background: #f6f8fa; border-color: #0969da; }
-                  .links a.primary { background: #0969da; color: white;
-                                     border-color: #0969da; }
-                  .links a.primary:hover { background: #0860ca; }
+                             border: 1px solid #30363d; border-radius: 6px;
+                             text-decoration: none; color: #58a6ff;
+                             font-weight: 500; background: #161b22;
+                             transition: background 0.15s ease, border-color 0.15s ease; }
+                  .links a:hover { background: #21262d; border-color: #58a6ff; }
+                  .links a.primary { background: #238636; color: #ffffff;
+                                     border-color: #238636; }
+                  .links a.primary:hover { background: #2ea043; border-color: #2ea043; }
               </style>
           </head>
           <body>
