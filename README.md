@@ -1,7 +1,7 @@
 # adaptive-chip-select
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub](https://img.shields.io/badge/GitHub-vkozhanova%2FAdaptiveChips-181717?logo=github)](https://github.com/vkozhanova/AdaptiveChips)
+[![Docs](https://img.shields.io/badge/Docs-vkozhanova.github.io%2FAdaptiveChips-blue)](https://vkozhanova.github.io/AdaptiveChips/)
 
 Адаптивный селектор чипов для Compose с синхронным скроллом рядов,
 магнитным снапом, индикатором и переключением свёрнутого / развёрнутого режима.
@@ -30,6 +30,7 @@
 - **Магнитный снап** к группам чипов после остановки скролла.
 - **Индикатор** со скользящим окном: при большом числе групп показывает окно
   из 7 точек, крайняя правая уменьшена, пока есть куда скроллить.
+  Количество видимых точек регулируется параметром maxVisibleDots (по умолчанию 7).
 - **`AdaptiveChipState`** — Single / Multiple / Limited(min, max).
   Сохраняется через `rememberSaveable` и переживает пересоздание Activity.
 - **Слоты** — можно использовать свой чип (`FilterChip`, `AssistChip`, что угодно),
@@ -94,9 +95,7 @@ gcp_username=your-github-username
 gcp_token=ghp_ваш_токен
 ```
 
-> Библиотека пока не опубликована в Maven Central. Когда это произойдёт,
-> установка сократится до одной строки `implementation(...)` без настройки
-> репозитория и токена.
+> Библиотека пока не опубликована в Maven Central.
 
 ## Быстрый старт
 
@@ -178,7 +177,7 @@ state.replace(setOf("1"))    // заменить набор
 - `AdaptiveChipTheme` — цвета и размеры самого чипа;
 - `AdaptiveChipsTheme` — цвета и размеры контейнера (карточки, индикатора, divider'ов).
 
-`AdaptiveChipsTheme(...)` умеет прокидывать оба уровня сразу — так удобнее:
+`AdaptiveChipsTheme(...)` для удобства умеет прокидывать оба уровня сразу:
 
 ```kotlin
 AdaptiveChipsTheme(
@@ -319,16 +318,15 @@ adaptive-chip-select/
 ./gradlew :adaptive-chip-select:test
 ```
 
-## Автор
-Vera Kozhanova
-
-GitHub: [@vkozhanova](https://github.com/vkozhanova)
-
 ## Ссылки
 
 - [Исходный код](https://github.com/vkozhanova/AdaptiveChips)
 - [Issues](https://github.com/vkozhanova/AdaptiveChips/issues)
 - [Packages](https://github.com/vkozhanova/AdaptiveChips/packages)
+- [Документация API](https://vkozhanova.github.io/AdaptiveChips/api/)
+
+## Автор
+Vera Kozhanova: [@vkozhanova](https://github.com/vkozhanova)
 
 ## Лицензия
 
