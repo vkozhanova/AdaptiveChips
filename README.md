@@ -3,53 +3,54 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docs](https://img.shields.io/badge/Docs-vkozhanova.github.io%2FAdaptiveChips-blue)](https://vkozhanova.github.io/AdaptiveChips/)
 
-Адаптивный селектор чипов для Compose с синхронным скроллом рядов,
-магнитным снапом, индикатором и переключением свёрнутого / развёрнутого режима.
+Adaptive chip selector for Compose with synchronized multi-row scrolling,
+magnetic snap, pager indicator, and collapsible / expandable modes.
 
-## Зачем
+## Why
 
-Стандартный `FlowRow` раскладывает чипы по строкам. Как только строк становится
-больше одной, появляются ограничения:
+Standard `FlowRow` lays chips out across rows. Once you have more than one row,
+limitations start to show:
 
-| Чего нет у `FlowRow` | Что даёт `adaptive-chip-select`                            |
-|---|------------------------------------------------------------|
-| Ряды скроллятся независимо друг от друга | Один общий `ScrollState` и все ряды двигаются синхронно    |
-| Скролл останавливается «где-то между» | Магнитный снап к ближайшей группе чипов                    |
-| Не видно, есть ли ещё контент впереди | Индикатор с подсказкой о продолжении                       |
-| Развернуть / свернуть — ваша задача | Готовый переход: 2–3 ряда со скроллом ↔ полный `FlowRow`   |
-| Состояния выделения нет | `AdaptiveChipState` с режимами Single / Multiple / Limited |
-| Число рядов не настраивается | Для этой задачи есть параметр `rowCount`                   |
+| Problem | What `adaptive-chip-select` gives you |
+|---|---|
+| Rows scroll independently | A single shared `ScrollState` — all rows move together |
+| Scroll stops "somewhere in between" | Magnetic snap to the nearest chip group |
+| No hint that more content is off-screen | Indicator with a sliding window and edge hint |
+| Collapse / expand is your job | Ready transition: 2–3 scrolling rows ↔ full `FlowRow` |
+| No selection state | `AdaptiveChipState` with Single / Multiple / Limited modes |
+| Row count not configurable | `rowCount` parameter |
 
-Один компонент решает все эти задачи.
+One component solves all of these.
 
-## Возможности
+## Features
 
-- **Свёрнутый режим** — N рядов чипов с одним общим `ScrollState`.
-- **Произвольное количество рядов** — задаётся параметром `rowCount`.
-- **Развёрнутый режим** — `FlowRow` в ограниченном контейнере.
-- **Магнитный снап** к группам чипов после остановки скролла.
-- **Индикатор** со скользящим окном: при большом числе групп показывает окно
-  из 7 точек, крайняя правая уменьшена, пока есть куда скроллить.
-  Количество видимых точек регулируется параметром maxVisibleDots (по умолчанию 7).
+- **Collapsed mode** — N rows of chips sharing a single `ScrollState`.
+- **Configurable row count** — via the `rowCount` parameter.
+- **Expanded mode** — `FlowRow` inside a bounded container.
+- **Magnetic snap** to chip groups after the scroll stops.
+- **Indicator** with a sliding window: shows all dots when there are ≤ 7 groups;
+  otherwise a 7-dot window centered on the current position. The rightmost dot
+  is smaller while there is more content to scroll to.
 - **`AdaptiveChipState`** — Single / Multiple / Limited(min, max).
-  Сохраняется через `rememberSaveable` и переживает пересоздание Activity.
-- **Слоты** — можно использовать свой чип (`FilterChip`, `AssistChip`, что угодно),
-  свой заголовок, своё пустое состояние.
-- **Двухуровневая тема** — цвета и размеры отдельно для чипа и для контейнера.
+  Backed by `rememberSaveable`, survives configuration changes.
+- **Slots** — bring your own chip (`FilterChip`, `AssistChip`, anything),
+  your own title, your own empty state.
+- **Two-level theming** — colors and dimensions for the chip and for the
+  container are configured separately.
 
-## Требования
+## Requirements
 
 - minSdk 26
 - Compose BOM 2024.09.00+
 - Kotlin 2.0+
 
-## Установка
+## Installation
 
-Пакет публикуется в [GitHub Packages](https://github.com/vkozhanova/AdaptiveChips/packages).
+The package is published to [GitHub Packages](https://github.com/vkozhanova/AdaptiveChips/packages).
 
-### 1. Добавьте Maven-репозиторий
+### 1. Add the Maven repository
 
-В `settings.gradle.kts`:
+In `settings.gradle.kts`:
 
 ```kotlin
 dependencyResolutionManagement {
@@ -69,9 +70,9 @@ dependencyResolutionManagement {
 }
 ```
 
-### 2. Добавьте зависимость
+### 2. Add the dependency
 
-В `build.gradle.kts` модуля:
+In the module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
@@ -79,25 +80,24 @@ dependencies {
 }
 ```
 
-### 3. Настройте доступ
+### 3. Configure access
 
-GitHub Packages требует токен **даже для публичных пакетов**. Создайте
-Personal Access Token со scope `read:packages`:
+GitHub Packages requires a token **even for public packages**. Create a
+Personal Access Token with the `read:packages` scope:
 
 1. https://github.com/settings/tokens → `Generate new token (classic)`.
 2. Scopes: `read:packages`.
-3. Скопируйте токен (`ghp_...`).
+3. Copy the token (`ghp_...`).
 
-Пропишите его в `~/.gradle/gradle.properties` — файл вне проекта, в git не попадёт:
+Put it in `~/.gradle/gradle.properties` — outside the project, so it never
+reaches git:
 
 ```properties
 gcp_username=your-github-username
-gcp_token=ghp_ваш_токен
+gcp_token=ghp_your_token
 ```
 
-> Библиотека пока не опубликована в Maven Central.
-
-## Быстрый старт
+## Quick start
 
 ```kotlin
 @Composable
@@ -128,27 +128,27 @@ fun SimpleSelector() {
 }
 ```
 
-Компонент сам решит:
+The component decides on its own:
 
-- показывать ли кнопку «Развернуть» — если чипы не влезают;
-- рисовать ли индикатор — если ряды длиннее экрана;
-- синхронизировать скролл рядов;
-- магнитить скролл к ближайшей группе.
+- whether to show the "Expand" button — if chips don't fit;
+- whether to draw the indicator — if rows exceed screen width;
+- how to synchronize row scrolling;
+- how to snap scroll to the nearest group.
 
-## Использование
+## Usage
 
-### Состояние выделения
+### Selection state
 
-`AdaptiveChipState` управляет тем, что выделено. Режимы:
+`AdaptiveChipState` tracks what is selected. Modes:
 
 ```kotlin
-// Один чип за раз
+// One chip at a time
 val state = rememberAdaptiveChipsState(selectionMode = SelectionMode.Single)
 
-// Любое количество
+// Any number
 val state = rememberAdaptiveChipsState(selectionMode = SelectionMode.Multiple)
 
-// От 1 до 3
+// Between 1 and 3
 val state = rememberAdaptiveChipsState(
     selectionMode = SelectionMode.limited(min = 1, max = 3),
 )
@@ -157,40 +157,42 @@ val state = rememberAdaptiveChipsState(
 API:
 
 ```kotlin
-state.selectedIds            // Set<String> — текущий набор
-state.selectionCount         // Int — сколько выделено
+state.selectedIds            // Set<String> — current selection
+state.selectionCount         // Int — number of selected items
 state.isSelected("id")       // Boolean
-state.toggle("id")           // переключить
-state.select("id")           // выделить (с учётом режима)
-state.deselect("id")         // снять выделение (с учётом режима)
-state.clear()                // снять всё
-state.replace(setOf("1"))    // заменить набор
+state.toggle("id")           // toggle
+state.select("id")           // select (respecting the mode)
+state.deselect("id")         // deselect (respecting the mode)
+state.clear()                // clear all
+state.replace(setOf("1"))    // replace the selection
 ```
 
-`rememberAdaptiveChipsState` использует `rememberSaveable` — состояние
-переживает поворот экрана и пересоздание Activity.
+`rememberAdaptiveChipsState` is backed by `rememberSaveable` — the state
+survives rotation and Activity recreation.
 
-### Темизация
+### Theming
 
-Есть два уровня темы:
+There are two theme levels:
 
-- `AdaptiveChipTheme` — цвета и размеры самого чипа;
-- `AdaptiveChipsTheme` — цвета и размеры контейнера (карточки, индикатора, divider'ов).
+- `AdaptiveChipTheme` — colors and dimensions of the chip itself;
+- `AdaptiveChipsTheme` — colors and dimensions of the container (card,
+  indicator, dividers).
 
-`AdaptiveChipsTheme(...)` для удобства умеет прокидывать оба уровня сразу:
+`AdaptiveChipsTheme(...)` provides both levels at once — the more convenient
+entry point:
 
 ```kotlin
 AdaptiveChipsTheme(
     colors = AdaptiveChipsDefaults.colors(),
     chipColors = AdaptiveChipDefaults.colors(),
 ) {
-    // ваши чипы
+    // your chips
 }
 ```
 
-#### Цвета из Material 3
+#### Colors from Material 3
 
-Если у вас Material-тема, есть готовый хелпер:
+If you already use a Material theme, there's a helper:
 
 ```kotlin
 MaterialTheme(colorScheme = myScheme) {
@@ -203,9 +205,9 @@ MaterialTheme(colorScheme = myScheme) {
 }
 ```
 
-Цвета чипов и контейнера будут выведены из `MaterialTheme.colorScheme`.
+Chip and container colors are derived from `MaterialTheme.colorScheme`.
 
-#### Свои цвета
+#### Custom colors
 
 ```kotlin
 AdaptiveChipsTheme(
@@ -223,10 +225,10 @@ AdaptiveChipsTheme(
 }
 ```
 
-### Свой чип
+### Bring your own chip
 
-Библиотека не требует использовать именно `AdaptiveChip`. Компонент
-`AdaptiveChipScroller` принимает слот, где вы рисуете что угодно:
+The library does not require `AdaptiveChip`. `AdaptiveChipScroller` accepts
+a slot where you draw whatever you like:
 
 ```kotlin
 AdaptiveChipScroller(
@@ -243,9 +245,10 @@ AdaptiveChipScroller(
 )
 ```
 
-Снап, скролл и индикатор работают так же, они не знают, как выглядит ваш чип.
+Snap, scroll, and the indicator work the same — they don't know what your
+chip looks like.
 
-### Слоты `AdaptiveChipSelectBlock`
+### `AdaptiveChipSelectBlock` slots
 
 ```kotlin
 AdaptiveChipSelectBlock(
@@ -254,9 +257,9 @@ AdaptiveChipSelectBlock(
     state = state,
     isExpanded = isExpanded,
     onToggleExpanded = { isExpanded = !isExpanded },
-    onEditCategory = null,   // скрыть иконку редактирования
+    onEditCategory = null,   // hide the edit icon
     titleContent = {
-        // свой заголовок с бейджем
+        // custom title with a badge
         Row {
             Text("Category Title", style = MaterialTheme.typography.titleMedium)
             Badge { Text("${state.selectionCount}") }
@@ -268,13 +271,13 @@ AdaptiveChipSelectBlock(
 )
 ```
 
-### Количество рядов
+### Row count
 
-По умолчанию свёрнутый режим показывает два ряда чипов. Число рядов задаётся
-параметром `rowCount`:
+By default, collapsed mode shows two rows of chips. The number of rows is
+controlled by `rowCount`:
 
 ```kotlin
-// Один ряд — горизонтальная лента
+// Single row — a horizontal ribbon
 AdaptiveChipSelectBlock(
     title = "Simple Chip Category",
     items = items,
@@ -284,50 +287,51 @@ AdaptiveChipSelectBlock(
     rowCount = 1,
 )
 
-// Три ряда
+// Three rows
 AdaptiveChipSelectBlock(
     // ...
     rowCount = 3,
 )
 ```
 
-Параметр влияет только на свёрнутый режим. В развёрнутом используется
-`FlowRow`, число рядов определяется шириной контейнера.
+The parameter affects collapsed mode only. In expanded mode, `FlowRow` is
+used and the row count is determined by container width.
 
-## Структура
+## Structure
 
 ```
 adaptive-chip-select/
 ├── components/
-│   ├── AdaptiveChip.kt             — базовый чип
-│   ├── AdaptiveChipItem.kt         — модель
-│   ├── AdaptiveChipScroller.kt     — синхронный скролл + снап
-│   ├── AdaptiveChipSelectBlock.kt  — карточка с раскрытием
-│   ├── AdaptiveChipState.kt        — состояние выделения
-│   ├── ChipPagerIndicator.kt       — индикатор
-│   └── ScrollInfo.kt               — позиция скролла
+│   ├── AdaptiveChip.kt             — base chip
+│   ├── AdaptiveChipItem.kt         — model
+│   ├── AdaptiveChipScroller.kt     — synchronized scroll + snap
+│   ├── AdaptiveChipSelectBlock.kt  — card with collapse/expand
+│   ├── AdaptiveChipState.kt        — selection state
+│   ├── ChipPagerIndicator.kt       — indicator
+│   └── ScrollInfo.kt               — scroll position
 └── theme/
-    ├── AdaptiveChipTheme.kt        — тема чипа
-    └── AdaptiveChipsTheme.kt       — тема контейнера
+    ├── AdaptiveChipTheme.kt        — chip theme
+    └── AdaptiveChipsTheme.kt       — container theme
 ```
 
-## Сборка
+## Build
 
 ```bash
 ./gradlew :adaptive-chip-select:build
 ./gradlew :adaptive-chip-select:test
 ```
 
-## Ссылки
+## Links
 
-- [Исходный код](https://github.com/vkozhanova/AdaptiveChips)
+- [Source code](https://github.com/vkozhanova/AdaptiveChips)
 - [Issues](https://github.com/vkozhanova/AdaptiveChips/issues)
 - [Packages](https://github.com/vkozhanova/AdaptiveChips/packages)
-- [Документация API](https://vkozhanova.github.io/AdaptiveChips/api/)
+- [API documentation](https://vkozhanova.github.io/AdaptiveChips/api/)
 
-## Автор
+## Author
+
 Vera Kozhanova: [@vkozhanova](https://github.com/vkozhanova)
 
-## Лицензия
+## License
 
-Apache License 2.0. См. [LICENSE](LICENSE).
+Apache License 2.0. See [LICENSE](LICENSE).
