@@ -2,7 +2,6 @@ package io.github.vkozhanova.adaptivechipselect.components
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,24 +25,24 @@ import androidx.compose.ui.unit.dp
 import io.github.vkozhanova.adaptivechipselect.R
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
-import java.util.Collections.emptyList
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 /**
- * Синхронный скроллер чипов в несколько рядов.
+ * Synchronized multi-row chip scroller.
  *
- * Не знает, как выглядит чип: рендер делегируется в [chip].
- * Позиции для магнитного снапа берутся из реального layout верхнего ряда.
+ * Doesn't know what a chip looks like — rendering is delegated to [chip].
+ * Magnetic snap positions are taken from the real layout of the top row.
  *
- * @param items элементы
- * @param state состояние выделения
- * @param key стабильный ключ элемента (используется как id в state и как ключ кэша позиций)
- * @param rowCount сколько рядов
- * @param onScrollInfo публикует информацию о скролле — для индикатора
- * @param chip слот: потребитель сам решает, как отрисовать чип
+ * @param items list of items
+ * @param state selection state
+ * @param key stable key for an item — used as the id in the state
+ *            and as a cache key for X-positions
+ * @param rowCount number of rows
+ * @param onScrollInfo publishes scroll information for the indicator
+ * @param chip slot: the consumer decides how to render each chip
  */
-@OptIn(ExperimentalFoundationApi::class)
+
 @Composable
 internal fun <T> AdaptiveChipScroller(
     items: List<T>,
@@ -152,18 +151,15 @@ internal fun <T> AdaptiveChipScroller(
                     rowItems.forEach { item ->
                         val itemKey = key(item)
                         Box(
-                            modifier = Modifier.onGloballyPositioned { coords ->
+                            modifier = Modifier.onGloballyPositioned { cords ->
                                 if (rowIndex == 0) {
-                                    val x = coords.positionInParent().x.roundToInt()
+                                    val x = cords.positionInParent().x.roundToInt()
                                     if (chipX[itemKey] != x) chipX[itemKey] = x
                                 }
                             },
                         ) {
-                            chip(
-                                item,
-                                state.isSelected(itemKey),
-                                { state.toggle(itemKey) },
-                            )
+                            chip(item, state.isSelected(itemKey))
+                            { state.toggle(itemKey) }
                         }
                     }
                 }
@@ -173,8 +169,8 @@ internal fun <T> AdaptiveChipScroller(
 }
 
 /**
- * Удобный overload для стандартного [AdaptiveChipItem]:
- * использует [AdaptiveChip] как чип по умолчанию.
+ * Convenience overload for [AdaptiveChipItem] that uses [AdaptiveChip]
+ * as the default chip.
  */
 
 @Composable
@@ -211,14 +207,14 @@ private fun SynchronizedChipScrollerPreview() {
         )
         AdaptiveChipScroller(
             items = listOf(
-                AdaptiveChipItem("1", "Чип первый", R.drawable.ic_chip_placeholder),
-                AdaptiveChipItem("2", "Чип второй", R.drawable.ic_chip_placeholder),
-                AdaptiveChipItem("3", "Чип третий", R.drawable.ic_chip_placeholder),
-                AdaptiveChipItem("4", "Чип четвертый", R.drawable.ic_chip_placeholder),
-                AdaptiveChipItem("5", "Чип пятый", R.drawable.ic_chip_placeholder),
-                AdaptiveChipItem("6", "Чип шестой", R.drawable.ic_chip_placeholder),
-                AdaptiveChipItem("7", "Чип седьмой", R.drawable.ic_chip_placeholder),
-                AdaptiveChipItem("8", "Чип восьмой", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("1", "Chip one", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("2", "Chip two", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("3", "Chip three", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("4", "Chip four", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("5", "Chip five", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("6", "Chip six", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("7", "Chip seven", R.drawable.ic_chip_placeholder),
+                AdaptiveChipItem("8", "Chip eight", R.drawable.ic_chip_placeholder),
             ),
             state = state,
             modifier = Modifier.padding(vertical = 8.dp),

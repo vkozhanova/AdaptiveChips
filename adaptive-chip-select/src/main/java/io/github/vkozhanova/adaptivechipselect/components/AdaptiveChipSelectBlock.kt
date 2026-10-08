@@ -41,19 +41,19 @@ import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsDimens
 
 /**
- * Развёрнутый режим: чипы раскладываются через `FlowRow` и переносятся
- * на следующую строку по мере заполнения ширины контейнера.
+ * Expanded mode: chips are laid out with `FlowRow` and wrap to the next row
+ * as the container width fills up.
  *
- * В отличие от [CollapsedChipGrid], здесь нет ограничения по числу рядов —
- * их количество определяется шириной контейнера. Если контент не влезает
- * по высоте, включается вертикальный скролл с ограничением
+ * Unlike [CollapsedChipGrid], there is no limit on the number of rows —
+ * the count is determined by the container width. If the content does not
+ * fit vertically, a vertical scroll kicks in, capped by
  * [AdaptiveChipsDimens.maxCollapsedHeight].
  *
- * Обычно используется не напрямую, а через [AdaptiveChipSelectBlock].
+ * Typically used through [AdaptiveChipSelectBlock] rather than directly.
  *
- * @param items список чипов
- * @param state состояние выделения
- * @param modifier модификатор корневого Box
+ * @param items list of chips
+ * @param state selection state
+ * @param modifier modifier for the root Box
  *
  * @see AdaptiveChipSelectBlock
  * @see CollapsedChipGrid
@@ -94,22 +94,22 @@ public fun ExpandedChipGrid(
 }
 
 /**
- * Свёрнутый режим: N рядов чипов с синхронным горизонтальным скроллом
- * и магнитным снапом к группам.
+ * Collapsed mode: N rows of chips with synchronized horizontal scrolling
+ * and magnetic snap to groups.
  *
- * Делегирует раскладку и поведение скролла в [AdaptiveChipScroller].
- * Под скроллером показывает [ChipPagerIndicator] — но только если
- * групп больше одной. Кнопка разворачивания (divider + стрелка)
- * появляется, только если контент реально не влезает по ширине
- * (`maxScroll > 0` в [ScrollInfo]).
+ * Delegates layout and scrolling behavior to [AdaptiveChipScroller].
+ * Below the scroller, shows [ChipPagerIndicator] — but only when there is
+ * more than one group. The expand button (divider + arrow) appears only
+ * when the content actually doesn't fit horizontally
+ * (`maxScroll > 0` in [ScrollInfo]).
  *
- * Обычно используется не напрямую, а через [AdaptiveChipSelectBlock],
- * который переключает [CollapsedChipGrid] и [ExpandedChipGrid].
+ * Typically used through [AdaptiveChipSelectBlock], which toggles between
+ * [CollapsedChipGrid] and [ExpandedChipGrid].
  *
- * @param items список чипов
- * @param state состояние выделения
- * @param onExpandClick колбэк клика по кнопке «Развернуть»
- * @param modifier модификатор корневого Column
+ * @param items list of chips
+ * @param state selection state
+ * @param onExpandClick callback invoked when the "Expand" button is clicked
+ * @param modifier modifier for the root Column
  *
  * @see AdaptiveChipSelectBlock
  * @see ExpandedChipGrid
@@ -151,7 +151,6 @@ public fun CollapsedChipGrid(
                 text = stringResource(R.string.adaptive_chips_expand),
                 onClick = onExpandClick,
                 iconResId = R.drawable.ic_chip_arrow_down,
-                modifier = modifier,
             )
         }
     }
@@ -186,17 +185,17 @@ private fun ExpandCollapseButton(
 }
 
 /**
- * Карточка выбора чипов с разворачиванием.
+ * Chip selection card with collapse/expand.
  *
- * @param title заголовок блока. Игнорируется, если задан [titleContent].
- * @param items список чипов.
- * @param state состояние выделения.
- * @param isExpanded режим: свёрнут (две строки со скроллом) или развёрнут (FlowRow).
- * @param onToggleExpanded колбэк переключения режима.
- * @param onEditCategory колбэк кнопки редактирования. Если null — иконка не показывается.
- * @param modifier модификатор корневого Column.
- * @param titleContent слот заголовка. Заменяет [title], если задан.
- * @param emptyContent слот пустого состояния. Показывается, если [items] пустой.
+ * @param title block title. Ignored when [titleContent] is provided.
+ * @param items list of chips.
+ * @param state selection state.
+ * @param isExpanded mode: collapsed (two scrolling rows) or expanded (FlowRow).
+ * @param onToggleExpanded callback that toggles the mode.
+ * @param onEditCategory edit-button callback. When null, the icon is hidden.
+ * @param modifier modifier for the root Column.
+ * @param titleContent title slot. Replaces [title] when provided.
+ * @param emptyContent empty-state slot. Shown when [items] is empty.
  */
 
 @Suppress("LongParameterList")
@@ -298,14 +297,14 @@ private fun AdaptiveChipSelectBlockPreview() {
             AdaptiveChipSelectBlock(
                 title = "Чипы разной длины",
                 items = listOf(
-                    AdaptiveChipItem("1", "Чип первый", R.drawable.ic_chip_placeholder),
-                    AdaptiveChipItem("2", "Чип второй", R.drawable.ic_chip_placeholder),
-                    AdaptiveChipItem("3", "Чип третий", R.drawable.ic_chip_placeholder),
-                    AdaptiveChipItem("4", "Чип четвертый", R.drawable.ic_chip_placeholder),
-                    AdaptiveChipItem("5", "Чип пятый", R.drawable.ic_chip_placeholder),
-                    AdaptiveChipItem("6", "Чип шестой", R.drawable.ic_chip_placeholder),
-                    AdaptiveChipItem("7", "Чип седьмой", R.drawable.ic_chip_placeholder),
-                    AdaptiveChipItem("8", "Чип восьмой", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("1", "Chip one", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("2", "Chip two", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("3", "Chip three", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("4", "Chip four", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("5", "Chip five", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("6", "Chip six", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("7", "Chip seven", R.drawable.ic_chip_placeholder),
+                    AdaptiveChipItem("8", "Chip eight", R.drawable.ic_chip_placeholder),
                 ),
                 state = state,
                 isExpanded = isExpanded,

@@ -15,16 +15,16 @@ import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChipSelectBloc
 import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChipScroller
 
 /**
- * Цвета, которые использует [AdaptiveChip].
+ * Colors used by [AdaptiveChip].
  *
- * Не путать с [AdaptiveChipsColors] — та отвечает за контейнер
- * (карточку, разделители, индикатор).
+ * Not to be confused with [AdaptiveChipsColors] — that one is for the container
+ * (card, dividers, indicator).
  *
- * Получить значения:
- * - [AdaptiveChipDefaults.colors] — нейтральные baseline-цвета,
- *   не зависящие от `MaterialTheme`;
- * - [AdaptiveChipDefaults.materialColors] — производные от текущей
- *   `MaterialTheme.colorScheme` (вызывать внутри `MaterialTheme`).
+ * Where to get the values:
+ * - [AdaptiveChipDefaults.colors] — neutral baseline colors independent
+ *   of `MaterialTheme`.
+ * - [AdaptiveChipDefaults.materialColors] — derived from the current
+ *   `MaterialTheme.colorScheme`; must be called inside `MaterialTheme`.
  */
 
 @Immutable
@@ -39,11 +39,11 @@ public data class AdaptiveChipColors(
 )
 
 /**
- * Размеры и отступы [AdaptiveChip]: высота, скругление, отступы под иконку,
- * размер галочки выделения и её смещения.
+ * Dimensions and spacing of [AdaptiveChip]: height, corner radius, icon
+ * padding, selection checkmark size and offsets.
  *
- * Значения по умолчанию подобраны так, чтобы чип смотрелся в одном ряду
- * с Material 3 FilterChip. Меняйте только если нужен другой визуальный язык.
+ * Defaults are tuned so the chip matches the visual rhythm of a Material 3
+ * `FilterChip`. Change only if you want a different visual language.
  */
 
 @Immutable
@@ -61,8 +61,8 @@ public data class AdaptiveChipDimens(
 )
 
 /**
- * Типографика [AdaptiveChip]. Сейчас содержит только стиль подписи —
- * на чипе больше нет текстовых элементов.
+ * Typography of [AdaptiveChip]. Currently only the label style — there are
+ * no other text elements on the chip.
  */
 
 @Immutable
@@ -71,11 +71,11 @@ public data class AdaptiveChipTypography(
 )
 
 /**
- * Точки входа для дефолтных значений темы чипа.
+ * Entry points for the default chip theme values.
  *
- * - [colors] / [dimens] / [typography] — baseline, не зависят от Material;
- * - [materialColors] — цвета, выведенные из `MaterialTheme.colorScheme`;
- *   обязательно вызывать внутри `MaterialTheme`.
+ * - [colors] / [dimens] / [typography] — baseline, independent of Material;
+ * - [materialColors] — colors derived from `MaterialTheme.colorScheme`;
+ *   must be called inside `MaterialTheme`.
  */
 
 public object AdaptiveChipDefaults {
@@ -124,17 +124,17 @@ internal val LocalAdaptiveChipTypography = staticCompositionLocalOf<AdaptiveChip
 }
 
 /**
- * Доступ к текущим значениям темы чипа из любого `@Composable`.
- * Значения берутся из ближайшего [AdaptiveChipTheme] в дереве композиции.
+ * Access to the current chip theme values from any `@Composable`.
+ * Values come from the nearest [AdaptiveChipTheme] in the composition tree.
  *
- * Используйте:
+ * Usage:
  * ```
  * val dimens = AdaptiveChipTheme.dimens
  * val colors = AdaptiveChipTheme.colors
  * ```
  *
- * Если [AdaptiveChipTheme] не обёрнут вокруг — рантайм-ошибка
- * «AdaptiveChipTheme is not provided».
+ * If [AdaptiveChipTheme] is not wrapped around, a runtime error
+ * "AdaptiveChipTheme is not provided" is thrown.
  */
 
 public object AdaptiveChipTheme {
@@ -147,17 +147,17 @@ public object AdaptiveChipTheme {
 }
 
 /**
- * Провайдер темы для [AdaptiveChip] и других чип-специфичных компонентов.
+ * Theme provider for [AdaptiveChip] and other chip-specific components.
  *
- * Оборачивайте дерево, если используете [AdaptiveChip] **отдельно** от
- * [AdaptiveChipsTheme]. Когда используете [AdaptiveChipSelectBlock]
- * или [AdaptiveChipScroller], достаточно [AdaptiveChipsTheme] — он
- * прокидывает и chip-тему тоже.
+ * Wrap your tree if you use [AdaptiveChip] **standalone**, outside of
+ * [AdaptiveChipsTheme]. When you use [AdaptiveChipSelectBlock] or
+ * [AdaptiveChipScroller], [AdaptiveChipsTheme] is enough — it also provides
+ * the chip theme.
  *
- * @param colors цвета чипа
- * @param dimens размеры чипа
- * @param typography типографика чипа
- * @param content содержимое, к которому применяется тема
+ * @param colors chip colors
+ * @param dimens chip dimensions
+ * @param typography chip typography
+ * @param content content to which the theme is applied
  */
 
 @Composable

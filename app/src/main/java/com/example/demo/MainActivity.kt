@@ -15,7 +15,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,7 +27,7 @@ import io.github.vkozhanova.adaptivechipselect.components.rememberAdaptiveChipsS
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipDefaults
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsDefaults
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
-import com.example.adaptivechips.ui.theme.DemoAppTheme
+import com.example.demo.ui.theme.DemoAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,17 +65,17 @@ private fun DemoContent() {
         selectionMode = SelectionMode.Multiple,
     )
     val items = remember {
-        mutableStateListOf(
-            AdaptiveChipItem("1", "Головокружение", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("2", "Головная боль", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("3", "Тошнота", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("4", "Слабость", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("5", "Температура", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("6", "Кашель", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("7", "Боль в груди", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("8", "Одышка", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("9", "Учащённый пульс", R.drawable.ic_chip_placeholder),
-            AdaptiveChipItem("10", "Потливость", R.drawable.ic_chip_placeholder),
+        listOf(
+            AdaptiveChipItem("1", "Dizziness", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("2", "Headache", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("3", "Nausea", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("4", "Fatigue", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("5", "Fever", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("6", "Cough", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("7", "Chest pain", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("8", "Shortness of breath", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("9", "Rapid heartbeat", R.drawable.ic_chip_placeholder),
+            AdaptiveChipItem("10", "Sweating", R.drawable.ic_chip_placeholder),
         )
     }
 
@@ -89,7 +88,7 @@ private fun DemoContent() {
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         AdaptiveChipSelectBlock(
-            title = "Симптомы",
+            title = "Symptoms",
             items = items,
             state = state,
             isExpanded = isExpanded,

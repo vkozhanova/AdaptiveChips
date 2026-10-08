@@ -3,12 +3,12 @@ package io.github.vkozhanova.adaptivechipselect.components
 import androidx.compose.runtime.Immutable
 
 /**
- * Информация о позиции скролла, публикуемая [AdaptiveChipScroller].
- * Используется индикатором [ChipPagerIndicator].
+ * Scroll position information published by [AdaptiveChipScroller].
+ * Consumed by [ChipPagerIndicator].
  *
- * @param currentGroup индекс текущей группы (0-based).
- * @param groupCount общее число групп.
- * @param maxScroll максимально возможное значение скролла в пикселях.
+ * @param currentGroup index of the current group (0-based).
+ * @param groupCount total number of groups.
+ * @param maxScroll maximum scroll value in pixels.
  */
 @Immutable
 public data class ScrollInfo(
