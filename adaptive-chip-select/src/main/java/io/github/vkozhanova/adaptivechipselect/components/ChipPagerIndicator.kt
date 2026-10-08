@@ -24,26 +24,26 @@ import androidx.compose.ui.unit.dp
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
 
 /**
- * Индикатор позиции скролла: ряд точек, где активная соответствует
- * текущей группе чипов.
+ * Scroll position indicator: a row of dots where the active one corresponds
+ * to the current chip group.
  *
- * При большом числе групп ([groupCount] > [maxVisibleDots]) показывается
- * не всё, а **скользящее окно** из [maxVisibleDots] точек, центрированное
- * на текущей позиции и прижимающееся к краям. Крайняя правая точка окна
- * уменьшена, пока пользователь не доскроллил до конца — это визуальная
- * подсказка, что контент продолжается.
+ * When there are many groups ([groupCount] > [maxVisibleDots]), not all dots
+ * are shown — instead a **sliding window** of [maxVisibleDots] dots is used,
+ * centered on the current position and clamped to the edges. The rightmost
+ * dot in the window is smaller until the user reaches the end — a visual hint
+ * that content continues.
  *
- * Если [groupCount] ≤ 1, компонент ничего не рисует.
+ * When [groupCount] ≤ 1, the component renders nothing.
  *
- * Обычно используется вместе с [AdaptiveChipScroller] через [ScrollInfo]:
- * скроллер публикует `ScrollInfo`, а индикатор получает из него
- * `groupCount` и `currentGroup`.
+ * Usually used together with [AdaptiveChipScroller] via [ScrollInfo]:
+ * the scroller publishes `ScrollInfo`, and the indicator extracts
+ * `groupCount` and `currentGroup` from it.
  *
- * @param groupCount общее число групп чипов (точек на полном индикаторе)
- * @param currentGroup индекс активной группы (0-based)
- * @param modifier модификатор корневого Row
- * @param maxVisibleDots максимальное число одновременно видимых точек;
- *        при превышении включается скользящее окно
+ * @param groupCount total number of chip groups (dots on a full indicator)
+ * @param currentGroup index of the active group (0-based)
+ * @param modifier modifier for the root Row
+ * @param maxVisibleDots maximum number of simultaneously visible dots;
+ *        beyond that, the sliding window kicks in
  *
  * @see ScrollInfo
  */

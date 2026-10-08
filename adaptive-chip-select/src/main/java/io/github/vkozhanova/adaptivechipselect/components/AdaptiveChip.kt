@@ -31,32 +31,31 @@ import io.github.vkozhanova.adaptivechipselect.R
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipTheme
 
 /**
- * Базовый чип: иконка слева, подпись, опциональная галочка выделения
- * в правом верхнем углу.
+ * Base chip: leading icon, label, and an optional selection checkmark
+ * in the top-right corner.
  *
- * Компонент **stateless** — принимает текущее состояние [isSelected]
- * и уведомляет об изменении через [onSelectionChange]. Для управления
- * выделением целого набора используйте [AdaptiveChipState] вместе
- * с [AdaptiveChipSelectBlock] или [AdaptiveChipScroller].
+ * The component is **stateless** — it takes the current [isSelected] value
+ * and reports changes via [onSelectionChange]. To manage selection of an
+ * entire set, use [AdaptiveChipState] together with [AdaptiveChipSelectBlock]
+ * or [AdaptiveChipScroller].
  *
- * Иконка задаётся одним из двух способов:
- * - [iconResId] — drawable-ресурс (Android-only);
- * - [leadingIcon] — слот, где можно нарисовать что угодно
- *   (в том числе вектор из `ImageVector` для KMP-совместимости).
+ * The icon can be provided in one of two ways:
+ * - [iconResId] — a drawable resource (Android-only);
+ * - [leadingIcon] — a slot where you can draw anything
+ *   (including an `ImageVector` for KMP compatibility).
  *
- * Если заданы оба — приоритет у [leadingIcon]. Если не задан ни один —
- * на месте иконки останется пустое пространство, чтобы выравнивание
- * чипов друг под другом не съезжало.
+ * If both are provided, [leadingIcon] wins. If neither is set, an empty
+ * space is kept where the icon would be, so chip alignment does not break.
  *
- * @param title текст на чипе
- * @param isSelected выделен ли чип в данный момент
- * @param onSelectionChange вызывается при клике с новым значением
- *        (инвертированным от [isSelected]); не вызывается, если [enabled] = false
- * @param modifier модификатор корневого контейнера
- * @param enabled если false — клик игнорируется, визуальных изменений нет
- * @param iconResId идентификатор drawable для иконки слева;
- *        используется, если [leadingIcon] не задан
- * @param leadingIcon слот для кастомной иконки; имеет приоритет над [iconResId]
+ * @param title text shown on the chip
+ * @param isSelected whether the chip is currently selected
+ * @param onSelectionChange invoked on click with the new value
+ *        (inverted from [isSelected]); not invoked when [enabled] = false
+ * @param modifier modifier for the root container
+ * @param enabled when false, clicks are ignored and no visual change occurs
+ * @param iconResId drawable resource id for the leading icon;
+ *        used when [leadingIcon] is not set
+ * @param leadingIcon slot for a custom icon; takes priority over [iconResId]
  *
  * @see AdaptiveChipItem
  * @see AdaptiveChipSelectBlock
@@ -160,25 +159,25 @@ private fun AdaptiveChipPreview() {
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 AdaptiveChip(
-                    title = "Чип первый",
+                    title = "Chip one",
                     isSelected = false,
                     onSelectionChange = {},
                     iconResId = R.drawable.ic_chip_placeholder,
                 )
                 AdaptiveChip(
-                    title = "Чип второй",
+                    title = "Chip two",
                     isSelected = true,
                     onSelectionChange = {},
                     iconResId = R.drawable.ic_chip_placeholder,
                 )
             }
             AdaptiveChip(
-                title = "Без иконки",
+                title = "No icon",
                 isSelected = false,
                 onSelectionChange = {},
             )
             AdaptiveChip(
-                title = "Выключен",
+                title = "Disabled",
                 isSelected = false,
                 onSelectionChange = {},
                 enabled = false,

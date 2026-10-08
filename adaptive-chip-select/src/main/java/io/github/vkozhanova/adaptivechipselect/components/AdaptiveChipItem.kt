@@ -4,14 +4,14 @@ import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
 
 /**
- * Модель чипа для [AdaptiveChipSelectBlock] и [AdaptiveChipScroller].
+ * Chip model for [AdaptiveChipSelectBlock] and [AdaptiveChipScroller].
  *
- * @param id стабильный идентификатор. Используется как ключ в [AdaptiveChipState],
- *           а также как ключ кэша X-позиций в скроллере.
- *           Должен быть уникальным в пределах одного списка и не меняться
- *           между рекомпозициями.
- * @param title текст на чипе.
- * @param iconResId идентификатор drawable-ресурса для иконки слева.
+ * @param id stable identifier. Used as the key in [AdaptiveChipState]
+ *           and as the cache key for X-positions in the scroller.
+ *           Must be unique within a single list and must not change
+ *           between recompositions.
+ * @param title text shown on the chip.
+ * @param iconResId drawable resource id for the leading icon.
  */
 @Immutable
 public data class AdaptiveChipItem(

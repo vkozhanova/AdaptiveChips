@@ -1,4 +1,4 @@
-package com.example.adaptivechips.ui.theme
+package com.example.demo.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
