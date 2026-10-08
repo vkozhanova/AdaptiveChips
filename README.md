@@ -1,5 +1,6 @@
 # adaptive-chip-select
 
+[![Release](https://img.shields.io/github/v/release/vkozhanova/AdaptiveChips)](https://github.com/vkozhanova/AdaptiveChips/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docs](https://img.shields.io/badge/Docs-vkozhanova.github.io%2FAdaptiveChips-blue)](https://vkozhanova.github.io/AdaptiveChips/)
 
