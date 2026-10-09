@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Docs](https://img.shields.io/badge/Docs-vkozhanova.github.io%2FAdaptiveChips-blue)](https://vkozhanova.github.io/AdaptiveChips/)
 
+**English** · [Русский](README.ru.md)
+
 Adaptive chip selector for Compose with synchronized multi-row scrolling,
 magnetic snap, pager indicator, and collapsible / expandable modes.
 
@@ -324,10 +326,10 @@ adaptive-chip-select/
 
 ## Links
 
-- [Source code](https://github.com/vkozhanova/AdaptiveChips)
-- [Issues](https://github.com/vkozhanova/AdaptiveChips/issues)
-- [Packages](https://github.com/vkozhanova/AdaptiveChips/packages)
 - [API documentation](https://vkozhanova.github.io/AdaptiveChips/api/)
+- [Releases](https://github.com/vkozhanova/AdaptiveChips/releases)
+- [Packages](https://github.com/vkozhanova/AdaptiveChips/packages)
+- [Issues](https://github.com/vkozhanova/AdaptiveChips/issues)
 
 ## Author
 
