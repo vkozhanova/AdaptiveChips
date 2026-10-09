@@ -78,7 +78,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("io.github.vkozhanova:adaptive-chip-select:0.1.0")
+    implementation("io.github.vkozhanova:adaptive-chip-select:0.1.1")
 }
 ```
 
