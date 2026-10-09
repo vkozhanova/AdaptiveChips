@@ -1,5 +1,11 @@
 # adaptive-chip-select
 
+[![Release](https://img.shields.io/github/v/release/vkozhanova/AdaptiveChips)](https://github.com/vkozhanova/AdaptiveChips/releases)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Docs](https://img.shields.io/badge/Docs-vkozhanova.github.io%2FAdaptiveChips-blue)](https://vkozhanova.github.io/AdaptiveChips/)
+
+[English](README.md) · **Русский**
+
 Адаптивный селектор чипов для Compose с синхронным скроллом рядов,
 магнитным снапом, индикатором и переключением свёрнутого / развёрнутого режима.
 
@@ -317,10 +323,10 @@ adaptive-chip-select/
 
 ## Ссылки
 
-- [Исходный код](https://github.com/vkozhanova/AdaptiveChips)
-- [Issues](https://github.com/vkozhanova/AdaptiveChips/issues)
-- [Packages](https://github.com/vkozhanova/AdaptiveChips/packages)
 - [Документация API](https://vkozhanova.github.io/AdaptiveChips/api/)
+- [Релизы](https://github.com/vkozhanova/AdaptiveChips/releases)
+- [Пакеты](https://github.com/vkozhanova/AdaptiveChips/packages)
+- [Issues](https://github.com/vkozhanova/AdaptiveChips/issues)
 
 ## Автор
 Vera Kozhanova: [@vkozhanova](https://github.com/vkozhanova)
