@@ -5,6 +5,13 @@ plugins {
     id("org.jetbrains.dokka") version "2.2.0"
 }
 
+// Version is provided by the release workflow via the LIB_VERSION environment
+// variable, derived from the Git tag (e.g. tag "v0.2.0" → version "0.2.0").
+// Locally, without the variable, falls back to a snapshot.
+val libraryVersion: String = providers.environmentVariable("LIB_VERSION")
+    .orElse("0.1.0-SNAPSHOT")
+    .get()
+
 android {
     namespace = "io.github.vkozhanova.adaptivechipselect"
     compileSdk {
@@ -45,7 +52,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "io.github.vkozhanova"
             artifactId = "adaptive-chip-select"
-            version = "0.1.0"
+            version = libraryVersion
 
             afterEvaluate {
                 from(components["release"])
