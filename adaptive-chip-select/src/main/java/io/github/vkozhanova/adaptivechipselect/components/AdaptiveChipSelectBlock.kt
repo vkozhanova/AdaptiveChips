@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +36,9 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.vkozhanova.adaptivechipselect.R
+import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipColors
+import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipTheme
+import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsColors
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsDimens
 
@@ -54,6 +56,8 @@ import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsDimens
  * @param items list of chips
  * @param state selection state
  * @param modifier modifier for the root Box
+ * @param chipColors chip colors override. When null, falls back to
+ *                   [AdaptiveChipTheme.colors].
  *
  * @see AdaptiveChipSelectBlock
  * @see CollapsedChipGrid
@@ -64,6 +68,7 @@ public fun ExpandedChipGrid(
     items: List<AdaptiveChipItem>,
     state: AdaptiveChipState,
     modifier: Modifier = Modifier,
+    chipColors: AdaptiveChipColors = AdaptiveChipTheme.colors,
 ) {
     val dimens = AdaptiveChipsTheme.dimens
 
@@ -73,21 +78,24 @@ public fun ExpandedChipGrid(
             .heightIn(max = dimens.maxCollapsedHeight)
             .verticalScroll(rememberScrollState()),
     ) {
-        FlowRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = dimens.horizontalScreenPadding),
-            horizontalArrangement = Arrangement.spacedBy(dimens.itemSpacing),
-            verticalArrangement = Arrangement.spacedBy(dimens.rowSpacing),
-            maxItemsInEachRow = Int.MAX_VALUE,
-        ) {
-            items.forEach { item ->
-                AdaptiveChip(
-                    title = item.title,
-                    iconResId = item.iconResId,
-                    isSelected = state.isSelected(item.id),
-                    onSelectionChange = { state.toggle(item.id) },
-                )
+        AdaptiveChipTheme(colors = chipColors) {
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = dimens.horizontalScreenPadding)
+                    .padding(top = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(dimens.itemSpacing),
+                verticalArrangement = Arrangement.spacedBy(dimens.rowSpacing),
+                maxItemsInEachRow = Int.MAX_VALUE,
+            ) {
+                items.forEach { item ->
+                    AdaptiveChip(
+                        title = item.title,
+                        iconResId = item.iconResId,
+                        isSelected = state.isSelected(item.id),
+                        onSelectionChange = { state.toggle(item.id) },
+                    )
+                }
             }
         }
     }
@@ -110,6 +118,11 @@ public fun ExpandedChipGrid(
  * @param state selection state
  * @param onExpandClick callback invoked when the "Expand" button is clicked
  * @param modifier modifier for the root Column
+ * @param rowCount number of rows. Defaults to 2.
+ * @param colors container colors override. When null, falls back to
+ *               [AdaptiveChipsTheme.colors].
+ * @param chipColors chip colors override. When null, falls back to
+ *                   [AdaptiveChipTheme.colors].
  *
  * @see AdaptiveChipSelectBlock
  * @see ExpandedChipGrid
@@ -121,6 +134,9 @@ public fun CollapsedChipGrid(
     state: AdaptiveChipState,
     onExpandClick: () -> Unit,
     modifier: Modifier = Modifier,
+    rowCount: Int = 2,
+    colors: AdaptiveChipsColors = AdaptiveChipsTheme.colors,
+    chipColors: AdaptiveChipColors = AdaptiveChipTheme.colors,
 ) {
     val dimens = AdaptiveChipsTheme.dimens
     var scrollInfo by remember { mutableStateOf(ScrollInfo(0, 0, 0)) }
@@ -131,26 +147,31 @@ public fun CollapsedChipGrid(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        AdaptiveChipScroller(
-            items = items,
-            state = state,
-            onScrollInfo = { scrollInfo = it },
-        )
+        AdaptiveChipTheme(colors = chipColors) {
+            AdaptiveChipScroller(
+                items = items,
+                state = state,
+                rowCount = rowCount,
+                onScrollInfo = { scrollInfo = it },
+            )
+        }
         if (scrollInfo.groupCount > 1) {
             ChipPagerIndicator(
                 groupCount = scrollInfo.groupCount,
                 currentGroup = scrollInfo.currentGroup,
+                colors = colors,
             )
         }
         if (canScroll) {
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = dimens.horizontalScreenPadding),
-                color = MaterialTheme.colorScheme.background,
+                color = colors.divider,
             )
             ExpandCollapseButton(
                 text = stringResource(R.string.adaptive_chips_expand),
                 onClick = onExpandClick,
                 iconResId = R.drawable.ic_chip_arrow_down,
+                colors = colors,
             )
         }
     }
@@ -162,6 +183,7 @@ private fun ExpandCollapseButton(
     onClick: () -> Unit,
     @DrawableRes iconResId: Int,
     modifier: Modifier = Modifier,
+    colors: AdaptiveChipsColors = AdaptiveChipsTheme.colors,
 ) {
     Row(
         modifier = Modifier
@@ -172,14 +194,15 @@ private fun ExpandCollapseButton(
     ) {
         Text(
             text = text,
-            style = AdaptiveChipsTheme.typography.sectionTitle
+            style = AdaptiveChipsTheme.typography.sectionTitle,
+            color = colors.expandCollapseText,
         )
         Spacer(modifier = Modifier.padding(2.dp))
         Icon(
             painter = painterResource(iconResId),
             contentDescription = null,
             modifier = modifier.size(20.dp),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            tint = colors.expandCollapseTint,
         )
     }
 }
@@ -190,12 +213,18 @@ private fun ExpandCollapseButton(
  * @param title block title. Ignored when [titleContent] is provided.
  * @param items list of chips.
  * @param state selection state.
- * @param isExpanded mode: collapsed (two scrolling rows) or expanded (FlowRow).
+ * @param isExpanded mode: collapsed (multiple rows with scroll) or expanded (FlowRow).
  * @param onToggleExpanded callback that toggles the mode.
  * @param onEditCategory edit-button callback. When null, the icon is hidden.
  * @param modifier modifier for the root Column.
  * @param titleContent title slot. Replaces [title] when provided.
  * @param emptyContent empty-state slot. Shown when [items] is empty.
+ * @param rowCount number of rows in collapsed mode. Ignored in expanded mode.
+ *                 Defaults to 2.
+ * @param colors container colors override. When null, falls back to
+ *               [AdaptiveChipsTheme.colors].
+ * @param chipColors chip colors override. When null, falls back to
+ *                   [AdaptiveChipTheme.colors].
  */
 
 @Suppress("LongParameterList")
@@ -210,14 +239,19 @@ public fun AdaptiveChipSelectBlock(
     onEditCategory: (() -> Unit)? = null,
     titleContent: (@Composable () -> Unit)? = null,
     emptyContent: (@Composable () -> Unit)? = null,
+    colors: AdaptiveChipsColors? = null,
+    chipColors: AdaptiveChipColors? = null,
+    rowCount: Int = 2,
 ) {
     val dimens = AdaptiveChipsTheme.dimens
+    val actualColors = colors ?: AdaptiveChipsTheme.colors
+    val actualChipColors = chipColors ?: AdaptiveChipTheme.colors
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
-            .background(MaterialTheme.colorScheme.onPrimary)
+            .background(actualColors.cardBackground)
             .padding(vertical = 17.dp),
     ) {
         Row(
@@ -233,6 +267,7 @@ public fun AdaptiveChipSelectBlock(
                 Text(
                     text = title,
                     style = AdaptiveChipsTheme.typography.sectionTitle,
+                    color = actualColors.titleText,
                 )
             }
             if (onEditCategory != null) {
@@ -242,7 +277,7 @@ public fun AdaptiveChipSelectBlock(
                     modifier = Modifier
                         .size(15.dp)
                         .clickable(onClick = onEditCategory),
-                    tint = MaterialTheme.colorScheme.secondary,
+                    tint = actualColors.editIconTint,
                 )
             }
         }
@@ -257,24 +292,29 @@ public fun AdaptiveChipSelectBlock(
             ExpandedChipGrid(
                 items = items,
                 state = state,
+                chipColors = actualChipColors,
             )
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(
                 modifier = Modifier.padding(horizontal = dimens.horizontalScreenPadding),
-                color = MaterialTheme.colorScheme.background,
+                color = actualColors.divider,
             )
             Spacer(modifier = Modifier.height(12.dp))
             ExpandCollapseButton(
                 text = stringResource(R.string.adaptive_chips_collapse),
                 onClick = onToggleExpanded,
                 iconResId = R.drawable.ic_chip_arrow_down,
-                modifier = Modifier.rotate(180f)
+                modifier = Modifier.rotate(180f),
+                colors = actualColors,
             )
         } else {
             CollapsedChipGrid(
                 items = items,
                 state = state,
                 onExpandClick = onToggleExpanded,
+                colors = actualColors,
+                chipColors = actualChipColors,
+                rowCount = rowCount,
             )
         }
     }

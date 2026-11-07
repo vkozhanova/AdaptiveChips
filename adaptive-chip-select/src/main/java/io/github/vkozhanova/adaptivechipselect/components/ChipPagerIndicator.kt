@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsColors
 import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
 
 /**
@@ -44,6 +45,8 @@ import io.github.vkozhanova.adaptivechipselect.theme.AdaptiveChipsTheme
  * @param modifier modifier for the root Row
  * @param maxVisibleDots maximum number of simultaneously visible dots;
  *        beyond that, the sliding window kicks in
+ * @param colors container colors override. When null, falls back to
+ *              [AdaptiveChipsTheme.colors].
  *
  * @see ScrollInfo
  */
@@ -54,12 +57,13 @@ public fun ChipPagerIndicator(
     currentGroup: Int,
     modifier: Modifier = Modifier,
     maxVisibleDots: Int = 7,
+    colors: AdaptiveChipsColors = AdaptiveChipsTheme.colors,
 ) {
     if (groupCount <= 1) return
 
-    val primary = AdaptiveChipsTheme.colors.indicatorActive
-    val inactive = AdaptiveChipsTheme.colors.indicatorInactive
-    val hint = AdaptiveChipsTheme.colors.indicatorHint
+    val primary = colors.indicatorActive
+    val inactive = colors.indicatorInactive
+    val hint = colors.indicatorHint
 
     val window: List<Int> = remember(groupCount, currentGroup, maxVisibleDots) {
         buildWindow(groupCount, currentGroup, maxVisibleDots)

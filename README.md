@@ -6,6 +6,8 @@
 
 **English** · [Русский](README.ru.md)
 
+![Demo](docs/images/demo.gif)
+
 Adaptive chip selector for Compose with synchronized multi-row scrolling,
 magnetic snap, pager indicator, and collapsible / expandable modes.
 
@@ -79,7 +81,7 @@ In the module's `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-    implementation("io.github.vkozhanova:adaptive-chip-select:0.1.1")
+    implementation("io.github.vkozhanova:adaptive-chip-select:0.2.0")
 }
 ```
 
