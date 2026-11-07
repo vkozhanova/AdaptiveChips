@@ -6,6 +6,8 @@
 
 [English](README.md) · **Русский**
 
+![Demo](docs/images/demo.gif)
+
 Адаптивный селектор чипов для Compose с синхронным скроллом рядов,
 магнитным снапом, индикатором и переключением свёрнутого / развёрнутого режима.
 
@@ -78,7 +80,7 @@ dependencyResolutionManagement {
 
 ```kotlin
 dependencies {
-    implementation("io.github.vkozhanova:adaptive-chip-select:0.1.1")
+    implementation("io.github.vkozhanova:adaptive-chip-select:0.2.0")
 }
 ```
 

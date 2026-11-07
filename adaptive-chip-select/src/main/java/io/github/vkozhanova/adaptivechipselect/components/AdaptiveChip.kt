@@ -116,7 +116,7 @@ public fun AdaptiveChip(
                 Text(
                     text = title,
                     style = AdaptiveChipTheme.typography.label,
-                    color = colors.label,
+                    color = if (isSelected) colors.selectedLabel else colors.unselectedLabel,
                 )
             }
         }

@@ -25,8 +25,16 @@ import io.github.vkozhanova.adaptivechipselect.components.AdaptiveChipScroller
  *   of `MaterialTheme`.
  * - [AdaptiveChipDefaults.materialColors] — derived from the current
  *   `MaterialTheme.colorScheme`; must be called inside `MaterialTheme`.
+ *
+ * @property selectedContainer background of the chip when selected.
+ * @property unselectedContainer background of the chip when not selected.
+ * @property selectedBorder border color of the chip when selected.
+ * @property checkBackground background of the checkmark circle.
+ * @property checkBorder border color of the checkmark circle.
+ * @property checkIconTint tint of the checkmark icon itself.
+ * @property unselectedLabel text color of the chip when not selected.
+ * @property selectedLabel text color of the chip when selected.
  */
-
 @Immutable
 public data class AdaptiveChipColors(
     val selectedContainer: Color,
@@ -35,7 +43,8 @@ public data class AdaptiveChipColors(
     val checkBackground: Color,
     val checkBorder: Color,
     val checkIconTint: Color,
-    val label: Color,
+    val unselectedLabel: Color,
+    val selectedLabel: Color,
 )
 
 /**
@@ -92,7 +101,8 @@ public object AdaptiveChipDefaults {
             checkBackground = scheme.secondary,
             checkBorder = scheme.onPrimary,
             checkIconTint = scheme.onPrimary,
-            label = scheme.onSurface.copy(alpha = 0.75f),
+            unselectedLabel = scheme.onSurface.copy(alpha = 0.75f),
+            selectedLabel = scheme.onSurface,
         )
     }
 
@@ -110,7 +120,8 @@ private val BaselineChipColors = AdaptiveChipColors(
     checkBackground = Color(0xFF625B71),
     checkBorder = Color(0xFFFFFFFF),
     checkIconTint = Color(0xFFFFFFFF),
-    label = Color(0xFF1C1B1F).copy(alpha = 0.75f),
+    unselectedLabel = Color(0xFF1C1B1F).copy(alpha = 0.75f),
+    selectedLabel = Color(0xFF1C1B1F),
 )
 
 internal val LocalAdaptiveChipColors = staticCompositionLocalOf<AdaptiveChipColors> {

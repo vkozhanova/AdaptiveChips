@@ -26,6 +26,16 @@ import io.github.vkozhanova.adaptivechipselect.components.ChipPagerIndicator
  * - [AdaptiveChipsDefaults.colors] — neutral baseline.
  * - [AdaptiveChipsDefaults.materialColors] — derived from the current
  *   `MaterialTheme.colorScheme`; must be called inside `MaterialTheme`.
+ *
+ * @property cardBackground background of the card container.
+ * @property divider color of horizontal dividers inside the card.
+ * @property editIconTint tint for the edit icon in the header.
+ * @property expandCollapseTint tint for the expand/collapse arrow icon.
+ * @property titleText color of the card title text.
+ * @property expandCollapseText color of the expand/collapse button text.
+ * @property indicatorActive color of the active pager indicator dot.
+ * @property indicatorInactive color of inactive pager indicator dots.
+ * @property indicatorHint color of the rightmost "hint" dot when more content exists.
  */
 
 @Immutable
@@ -34,6 +44,8 @@ public data class AdaptiveChipsColors(
     val divider: Color,
     val editIconTint: Color,
     val expandCollapseTint: Color,
+    val titleText: Color,
+    val expandCollapseText: Color,
     val indicatorActive: Color,
     val indicatorInactive: Color,
     val indicatorHint: Color,
@@ -84,6 +96,8 @@ public object AdaptiveChipsDefaults {
             divider = scheme.surfaceVariant,
             editIconTint = scheme.secondary,
             expandCollapseTint = scheme.onSurface,
+            titleText = scheme.onSurface,
+            expandCollapseText = scheme.onSurface,
             indicatorActive = scheme.primary,
             indicatorInactive = scheme.onSurface.copy(alpha = 0.2f),
             indicatorHint = scheme.onSurface.copy(alpha = 0.1f),
@@ -105,6 +119,8 @@ private val BaselineColors = AdaptiveChipsColors(
     divider = Color(0xFFE7E0EC),
     editIconTint = Color(0xFF625B71),
     expandCollapseTint = Color(0xFF1C1B1F),
+    titleText = Color(0xFF1C1B1F),
+    expandCollapseText = Color(0xFF1C1B1F),
     indicatorActive = Color(0xFF6750A4),
     indicatorInactive = Color(0xFF1C1B1F).copy(alpha = 0.2f),
     indicatorHint = Color(0xFF1C1B1F).copy(alpha = 0.1f),

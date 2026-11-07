@@ -158,8 +158,7 @@ internal fun <T> AdaptiveChipScroller(
                                 }
                             },
                         ) {
-                            chip(item, state.isSelected(itemKey))
-                            { state.toggle(itemKey) }
+                            chip(item, state.isSelected(itemKey)) { state.toggle(itemKey) }
                         }
                     }
                 }
