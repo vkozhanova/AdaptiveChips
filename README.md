@@ -6,7 +6,7 @@
 
 **English** · [Русский](README.ru.md)
 
-![Demo](docs/images/demo.gif)
+![Demo](docs/images/demo_0.gif)
 
 Adaptive chip selector for Compose with synchronized multi-row scrolling,
 magnetic snap, pager indicator, and collapsible / expandable modes.
